@@ -58,8 +58,6 @@ while(arrObj !== "q"){
 
 console.log("Your array");
 console.log(arr);
-console.log(arr.length);
 splitMassive(arr);
-console.log(arr.length);
 console.log("Sort array");
 console.log(arr);

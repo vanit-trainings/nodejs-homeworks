@@ -28,17 +28,23 @@ list.prototype.remove = function(ind){
     if(!isNaN(Number(ind)) && ind >= 0 && ind < this.length){
         let n = this.first;
         if(ind === 0){
+            if(this.length > 1){
             n.next.prev = null;
             this.first = n.next;
             n.prev = null;
             n.next = null;
-            
+            }
+            else{
+                this.first = null;
+                this.last = null;
+            }            
         }
         else if(ind === (this.length - 1)){
             n = this.last;
             n.prev.next = null;
             this.last = n.prev;
             n.prev = null;
+            n.next = null
         }
         else{
             for(let i = 0; i < ind; i++){
@@ -54,7 +60,7 @@ list.prototype.remove = function(ind){
 }
 
 list.prototype.isEmpty = function(){
-	if(this.length === 0){
+	if(this.length == 0){
 		return true;
 	}
 	else{
@@ -71,11 +77,23 @@ list.prototype.print = function(){
     console.log("");
 }
 
+list.prototype.clear = function(){
+    let n = this.first
+    while(n !== null){
+        n = n.next;
+        this.remove(0);
+    }
+}
 var d = new list();
 d.add(1);
 d.add(2);
 d.add(3);
 d.add(4);
 d.print();
-d.remove(2);
+d.remove(0);
 d.print();
+console.log(d.isEmpty());
+d.clear();
+console.log(d.print());
+console.log(d.length);
+console.log(d.isEmpty());

@@ -22,7 +22,6 @@ function existingLogin(login, obj) {
 function validateEmail(email) {
     const regEmail = new RegExp(/^(\w+)(\.|_)?(\w+)(\.|_)?(\w{1,})@(\w+)(\.(\w+))+/);
     if(email.match(regEmail) !== null){
-    console.log(email === email.match(regEmail)[0]);
     return email === email.match(regEmail)[0];
     }
     return false;
@@ -54,11 +53,11 @@ function validateName(name) {
 router.post('/registration', function(req, res) {
     var contype = req.headers['content-type'];
     if (!contype || contype.indexOf('application/json') !== 0) {
-       return res.send(400);
+       return res.status(400).send("Bad request: conten-type not application/json");;
     }
     jsonfile.readFile(filePath, function(err, obj) {
         if(err) {
-            return res.status(500).send("Server error1");
+            return res.status(500).send("Server error");
             }
         if(Object.keys(req.body).length === 0) {
             return res.status(400).send("Bad request: Body is empty");
@@ -111,9 +110,9 @@ router.post('/registration', function(req, res) {
                     return res.status(500).send("Server error");
                     }
                     return res.status(200).send("OK");
-                    });
-        }
-    });
+                });
+            }
+            });
         });
     
     });

@@ -1,5 +1,5 @@
 {
-  "name": "tukhik",
+  "name": "myapp",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,9 @@
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "jsonfile": "^5.0.0",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "uniqid": "^5.0.3",
+    "utf8": "^3.0.0",
+    "uuid-token-generator": "^1.0.0"
   }
 }

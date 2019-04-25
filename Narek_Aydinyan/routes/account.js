@@ -20,8 +20,8 @@ function existingLogin(login, obj) {
 }
 
 function validateEmail(email) {
-    const regEmail = new RegExp(/^(\w+)(\.|_)?(\w+)(\.|_)?(\w{1,})@(\w+)(\.(\w+))+/);
-    if(email.match(regEmail) !== null){
+    const regEmail = new RegExp(/^[a-zA-z0-9][._]?[a-zA-Z0-9][._]?[a-zA-z0-9{1,}]@[a-zA-z][.][[a-zA-Z]{1,64}]/);
+    if(email.match(regEmail) !== null) {
     return email === email.match(regEmail)[0];
     }
     return false;

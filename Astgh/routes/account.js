@@ -1,39 +1,42 @@
 const express = require('express');
 const uniqid = require('uniqid');
 const jsonfile = require('jsonfile');
+const TokenGenerator = require('uuid-token-generator');
 const router = express.Router();
 
 const filePath = './data/users.json';
 const logPassPath = './data/logPassId.json';
 const tokenIdPath = './data/tokenId.json';
-const TokenGenerator = require('uuid-token-generator');
 
 function validateLogin(login) {
     const regLog = new RegExp(/^((\w+)(\.|_)?){5,16}/);
-    if(login.match(regLog)[0] !== null) {
+    if (login.match(regLog)[0] !== null) {
         return (login === login.match(regLog)[0]);
     }
     return false;
 }
+
 function existingLogin(login, obj) {
-    if(obj[login] != undefined) {
+    if (obj[login] != undefined) {
         return false;
     }
     return true;
 }
+
 function validateEmail(email) {
     const regEmail = new RegExp(/[a-zA-z0-9]+[._]?[a-zA-Z0-9]+[._]?[a-zA-z0-9]@[a-zA-z]+[.][a-zA-Z]{1,}/);
-    if(email.match(regEmail) !== null) {
+    if (email.match(regEmail) !== null) {
         return email === email.match(regEmail)[0];
     }
     return false;
 }
+
 function existingEmail(obj, email) {
-    if(obj.email === email){ 
+    if (obj.email === email){ 
         return false; 
     }
-    for(var i in obj) {
-        if(obj[i].email === email) {
+    for (var key in obj) {
+        if (obj[key].email === email) {
             return false;
         }
     }
@@ -44,9 +47,10 @@ function validatePassword(password) {
     const regPass = new RegExp(/(\w+){6,16}/);
     return (password === password.match(regPass)[0]);
 }
+
 function validateName(name) {
     const regName = new RegExp(/^[A-Z]{1}[a-z]+/);
-    if(name.match(regName) !== null) {
+    if (name.match(regName) !== null) {
         return (name === name.match(regName)[0]);
     }
     return false;
@@ -55,126 +59,125 @@ function validateName(name) {
 function authorization(req) {
     const token = req.headers['token'];
     let id;
-    if(req.body && req.body.length !== 0) {
+    if (req.body && req.body.length !== 0) {
         id = req.body.userId;
     }
     else {
-        if(req.query.userId !== null) {
+        if (req.query.userId !== null) {
             id = req.query.userId;
         }
         else {
-            return "Id is missing";
+            return 'Id is missing';
         }
     }
     
     jsonfile.readFile(tokenIdPath, function(err, obj3) {
-        if(err) {
-            return "Server error";
+        if (err) {
+            return 'Server error';
         }
-        if(obj3[token] !== id){
+        if (obj3[token] !== id){
             return "Token Id pair don't match";
         }
-        return "OK";
+        return 'OK';
     });
 }
 
-router.post('/signUp', function(req, res) {
-    jsonfile.readFile(filePath, function(err, obj) {
-        if(err) {
-            return res.status(500).send('Server error');
-        }
-        if(Object.keys(req.body).length === 0) {
-            return res.status(400).send('Bad request: Body is empty');
-        }
-        if(!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
-            return res.status(400).send('Bad request: Enter valid login');
-        } 
-        jsonfile.readFile(logPassPath, function(err, obj1) {
-            if(err) {
-                return res.status(500).send('Server error');
-            }
-            if(!existingLogin(req.body.login, obj1)) {
-                return res.status(400).send('Bad request: Login already busy'); 
-            }
-            if(!validatePassword(req.body.password)) {
-                return res.status(400).send('Bad request: Enter valid password');
-            }
-            if(!validateName(req.body.firstName) || !validateName(req.body.lastName)) {
-                return res.status(400).send('Bad request: Invalid firstName or lastName');
-            }
-            if(!validateEmail(req.body.email)) {
-                return res.status(400).send('Bad request: Enter valid email');
-            }
-            if(!existingEmail(obj, req.body.email)) {
-                return res.status(400).send('Bad request: Email already busy'); 
-            }
-        const id = uniqid();
-        let codePass = (new Buffer(req.body.password)).toString('base64');
-        let data = {};
-        data.firstName = req.body.firstName;    
-        data.lastName = req.body.lastName;    
-        data.email = req.body.email;    
-        data.login = req.body.login;    
-        data.gender = req.body.gender;
-        data.birthDate = req.body.birthDate;
-        data.userId = id;
-        obj[id] = data;
+router.post('/registr', function(req, res) {
+	if (Object.keys(req.body).length === 0) {
+		return res.status(400).send('Bad request: Body is empty');
+	}
+	if (!validateName(req.body.firstName) || !validateName(req.body.lastName)) {
+		return res.status(400).send('Bad request: Invalid firstName or lastName');
+	}
+	if (!validateEmail(req.body.email)) {
+		return res.status(400).send('Bad request: Enter valid email');
+	}
+	if (!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
+		return res.status(401).send('Bad request: Enter valid login');
+	}
+	if (!validatePassword(req.body.password)) {
+		return res.status(400).send('Bad request: Enter valid password');
+	} 
+	jsonfile.readFile(filePath, function(err, obj) {
+		if (err) {
+			return res.status(500).send('Server error');
+		}
+		if (!existingEmail(obj, req.body.email)) {
+			return res.status(409).send('Bad request: Email already busy'); 
+		}
+		jsonfile.readFile(logPassPath, function(err, obj1) {
+			if (err) {
+				return res.status(500).send('Server error');
+			}
+			if (!existingLogin(req.body.login, obj1)) {
+				return res.status(400).send('Bad request: Login already busy'); 
+			}
+			const id = uniqid();
+			const codePass = (new Buffer(req.body.password)).toString('base64');
+			let data = {};
+			data.firstName = req.body.firstName;    
+			data.lastName = req.body.lastName;    
+			data.email = req.body.email;    
+			data.login = req.body.login;    
+			data.gender = req.body.gender;
+			data.birthDate = req.body.birthDate;
+			data.userId = id;
+			obj[id] = data;
 
-        let logPass = {};    
-        logPass.password = codePass;
-        logPass.userId = id;
+			let logPass = {};    
+			logPass.password = codePass;
+			logPass.userId = id;
 
-        jsonfile.writeFile(filePath, obj, {spaces: 2, EOL: "\r\n"}, function(err) {
-            if(err) {
-                return res.status(500).send('Server error');
-            }
-            else {
-                obj1[req.body.login] = logPass;
-                jsonfile.writeFile(logPassPath, obj1, {spaces: 2, EOL: "\r\n"}, function(err) {
-                    if(err) {
-                        return res.status(500).send('Server error');
-                    }
-                    return res.status(200).send('OK');
-                });
-            }
-        });
-    });
+			jsonfile.writeFile(filePath, obj, {spaces: 2, EOL: "\r\n"}, function(err) {
+				if (err) {
+					return res.status(500).send('Server error');
+				}
+				else {
+					obj1[req.body.login] = logPass;
+					jsonfile.writeFile(logPassPath, obj1, {spaces: 2, EOL: "\r\n"}, function(err) {
+						if(err) {
+							return res.status(500).send('Server error');
+						}
+						return res.status(200).send('OK');
+					});
+				}
+			});
+		});
+	});
 });
-});  
 
-router.post('/signIn', function(req, res) {
-    if(Object.keys(req.body).length === 0) {
+router.post('/login', function(req, res) {
+    if (Object.keys(req.body).length === 0) {
         return res.status(400).send('Bad request: Body is empty');
     }
-    if(!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
+    if (!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
         return res.status(400).send('Bad request: Enter valid login');
     } 
-    if(!validatePassword(req.body.password)) {
+    if (!validatePassword(req.body.password)) {
         return res.status(400).send('Bad request: Enter valid password');
     }
     jsonfile.readFile(logPassPath, function(err, obj4) {
-        if(err){
+        if (err){
             return res.status(500).send('Server error'); 
         }
-        let id;     
-        if(!obj4.hasOwnProperty(req.body.login) || obj4[req.body.login].password !== (new Buffer(req.body.password)).toString('base64')){
+        if (!obj4.hasOwnProperty(req.body.login) || obj4[req.body.login].password !== (new Buffer(req.body.password)).toString('base64')){
             return res.status(400).send('Bad request: Enter valid login and password');
         }     
         else {
-            id = obj4[req.body.login].userId;
+            const id = obj4[req.body.login].userId;
             const token = (new TokenGenerator(256, TokenGenerator.BASE62)).generate();
             jsonfile.readFile(tokenIdPath, function(err, obj5) {
-                if(err) {
+                if (err) {
                     return res.status(500).send('Server error'); 
                 }
                 
                 obj5[token] = id;
                 jsonfile.writeFile(tokenIdPath, obj5, {spaces: 2, EOL: "\r\n"}, function(err) {
-                    if(err) {
+                    if (err) {
                         return res.status(500).send('Server error');
                     }
                     jsonfile.readFile(filePath, function(err, obj5) {
-                        if(err) {
+                        if (err) {
                             return res.status(500).send('Server error'); 
                         }
                         let userInfo = {};
@@ -185,11 +188,11 @@ router.post('/signIn', function(req, res) {
                         userInfo.gender = obj5[id].gender;
                         userInfo.email = obj5[id].email;
                         jsonfile.writeFile(filePath, obj5,{spaces: 2, EOL: "\r\n"}, function(err) {
-                        if(err) {            
+                        if (err) {            
                             return res.status(500).send('Server error');
                         }
                         jsonfile.writeFile(logPassPath, obj4, {spaces: 2, EOL: "\r\n"}, function(err) {
-                            if(err) {
+                            if (err) {
                                 return res.status(500).send('Server error');
                             }
                             res.writeHead(200, {'token':token});
@@ -206,24 +209,24 @@ router.post('/signIn', function(req, res) {
     });
 });
 
-router.get('/signOut', function(req, res) {
-    if(authorization(req) === 'Server error') {
+router.get('/logOut', function(req, res) {
+    if (authorization(req) === 'Server error') {
         return res.status(500).send('Server error');
     }
-    if(authorization(req) === 'Id is missing') {
+    if (authorization(req) === 'Id is missing') {
         return res.status(400).send('Bad request: UserId is missing');
     }
-    if(authorization(req) === "Token Id pair don't match") {
+    if (authorization(req) === "Token Id pair don't match") {
         return res.status(400).send("Bad request: Token Id pair don't match");
     }
     const token = req.headers['token'];
     jsonfile.readFile(tokenIdPath, function(err, obj6) {
-        if(err) {
+        if (err) {
             return res.status(500).send('Server error'); 
         }
         delete(obj6[token]);
         jsonfile.writeFile(tokenIdPath, obj6, {spaces: 2, EOL: "\r\n"}, function(err) {
-            if(err) {
+            if (err) {
                 return res.status(500).send('Server error'); 
             }
             return res.status(200).send('OK');

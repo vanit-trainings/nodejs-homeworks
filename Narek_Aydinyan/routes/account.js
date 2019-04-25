@@ -245,12 +245,7 @@ router.get('/signOut', function(req, res) {
             return res.status(500).send("Server error"); 
         }
         delete(obj6[token]);
-        console.log(obj6);
-       /* if(obj6 === {}){
-            return res.status(200).send("OK");
-        }*/
         jsonfile.writeFile(tokenIdPath, obj6,{spaces: 2, EOL:"\r\n"}, function(err) {
-            console.log(obj6);
             if(err){
                 return res.status(500).send("Server error"); 
             }

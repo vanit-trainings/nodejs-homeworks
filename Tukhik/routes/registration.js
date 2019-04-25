@@ -12,6 +12,7 @@ function isvVlidUsernameOrPasswoord(usernameOrPassword) {
 router.post('/', function (req, res) {
     jsonfile.readFile(users, function(err, obj){
         if (err) {
+			console.log(err);
             return res.status(500).send("Server error");
         }
         if (!isvVlidUsernameOrPasswoord(req.body.username) && !isvVlidUsernameOrPasswoord(req.body.password)){
@@ -27,16 +28,13 @@ router.post('/', function (req, res) {
         };
         jsonfile.writeFile(users, obj,  function(err){
             if(err){
+				console.log(err);
                 return res.status(500).send("Server error");
             }
-            return res.status(200).send("success");
+            return res.status(200).send("ok");
         });
     })
 });
-
-
-
-
 
 
 module.exports = router;

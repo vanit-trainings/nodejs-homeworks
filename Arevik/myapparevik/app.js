@@ -10,6 +10,10 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const booksRouter = require('./routes/books');
+const userRouter = require('./routes/registration');
+const loginRouter = require('./routes/authorization');
+
+
 
 const app = express();
 
@@ -29,7 +33,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/index', indexRouter);
-app.use('/', booksRouter);
+app.use('/', loginRouter);
+//app.use('/', booksRouter);
+app.use('/', userRouter);
+
 
 
 // catch 404 and forward to error handler

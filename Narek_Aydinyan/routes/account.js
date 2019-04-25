@@ -92,6 +92,18 @@ function authorization(req) {
     });
 }
 
+function getUserInfoObj(info, id) {
+    let data = {};
+    data.firstName = info.firstName;    
+    data.lastName = info.lastName;    
+    data.email = info.email;    
+    data.login = info.login;    
+    data.gender = info.gender;
+    data.birthDate = info.birthDate;
+    data.userId = id;
+    return data;
+}
+
 router.post("/registr", function (req, res) {
     if (Object.keys(req.body).length === 0) {
         return res.status(400).send("Bad request: Body is empty");
@@ -108,7 +120,6 @@ router.post("/registr", function (req, res) {
     if (!validateEmail(req.body.email)) {
         return res.status(401).send("Bad request: Enter valid email");
     }
-
     jsonfile.readFile(userInfoPath, function (err, userInfoDb) {
         if (err) {
             return res.status(500).send("Server error");
@@ -124,26 +135,15 @@ router.post("/registr", function (req, res) {
                 return res.status(409).send("Bad request: Login already busy"); 
             }
             const id = uniqid();
-            const codePass = (new Buffer(req.body.password)).toString("base64");
-            let data = {};
-            data.firstName = req.body.firstName;    
-            data.lastName = req.body.lastName;    
-            data.email = req.body.email;    
-            data.login = req.body.login;    
-            data.gender = req.body.gender;
-            data.birthDate = req.body.birthDate;
-            data.userId = id;
-            userInfoDb[id] = data;
-
-            let logPass = {};    
-            logPass.password = codePass;
-            logPass.userId = id;
-
+            userInfoDb[id] = getUserInfoObj(req.body, id);
             jsonfile.writeFile(userInfoPath, userInfoDb, {spaces: 2, EOL:"\r\n"}, function (err) {
                 if (err) {
                     return res.status(500).send("Server error");
                 }
                 else {
+                    let logPass = {};    
+                    logPass.password = (new Buffer(req.body.password)).toString("base64");
+                    logPass.userId = id;
                     logPassDb[req.body.login] = logPass;
                     jsonfile.writeFile(logPassPath, logPassDb, {spaces: 2, EOL:"\r\n"}, function (err) {
                         if (err) {

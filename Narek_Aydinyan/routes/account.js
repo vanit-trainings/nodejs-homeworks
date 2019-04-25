@@ -22,9 +22,9 @@ function existingLogin(login, obj) {
     return true;
 }
 function validateEmail(email) {
-    const regEmail = new RegExp(/^(\w+)(\.|_)?(\w+)(\.|_)?(\w{1,})@(\w+)(\.(\w+))+/);
-    if(email.match(regEmail) !== null){
-        return email === email.match(regEmail)[0];
+    const regEmail = new RegExp(/[a-zA-z0-9]+[._]?[a-zA-Z0-9]+[._]?[a-zA-z0-9]@[a-zA-z]+[.][a-zA-Z]{1,}/);
+    if(email.match(regEmail) !== null) {
+    return email === email.match(regEmail)[0];
     }
     return false;
 }

@@ -1,46 +1,68 @@
 const express = require('express');
 const router = express.Router();
 const jsonfile = require('jsonfile');
-const users = "./data/users.json";
+const filepath = "./data/users.json";
+const coockie = "./data/coockie.json";
 
-function isvVlidUsername(username) {
-    const regex = /^[a-zA-Z\-]+$/;
-    return regex.test(username);//true || false 
-
-}
-function isValidaPassword(password){
-    const regex =  /^[A-Za-z]\w{7,15}$/;
-    return regex.test(password);//true || false
+function tokenGenerate(username) {
+    if (username.length !== 32) {
+        for (let i = 1; i < 32 - username.length; i++) {
+            username += "a";
+        }
+    }
+    return Buffer.from(username).toString('base64');
 }
 
 router.post('/', function (req, res) {
-    jsonfile.readFile(users, function(err, obj){
+
+    jsonfile.readFile(filepath, function (err, obj) {
         if (err) {
-            return res.status(500).send("Server error");
+            return res.status(500).send("Server error!");
         }
-        if (!isvVlidUsername(req.body.username) && !isValidaPassword(req.body.password)){
+        // return res.send(req.headers)
+        if (req.headers["content-type"] !== "application/json") {
             return res.status(400).send("bad request");
         }
-        if(obj[req.body.username]){// add token
-            return res.status(400).send("Username is already used");
+        if (Object.keys(req.body).length !== 2 || !req.body.username || !req.body.password) {
+            return res.status(400).send("bad request");
         }
-        obj[req.body.username] = {//petq chi stex
-            username : req.body.username,
-            password : Buffer.from(req.body.password).toString('base64')
-            
-        };
-        jsonfile.writeFile(users, obj, {spaces: 2, EOL: '\r\n'}, function(err){//petq chi stex
-            if(err){
-                return res.status(500).send("Server error");
+        if (!(Buffer.from(obj[req.body.username].password, 'base64').toString('ascii') === req.body.password)) {
+            return res.status(400).send("bad request");
+        }
+        if (!obj[req.body.username]) {
+            return res.status(400).send("bad request");
+        }
+
+        jsonfile.readFile(coockie, function (err, data) {
+            if (err) {
+                return res.status(500).send("Server error!");
             }
-            return res.status(200).send("success");
-        });
+            if (data[req.headers.token]) {
+                return res.status(200).send("Has already logined")
+            }
+            const token = tokenGenerate(req.body.username);
+            // let targetDate = new Date();
+            // targetDate.setDate(targetDate.getDate() + 10);
+            let now=new Date();
+            let later=new Date();
+            later.setHours(now.getHours()+6);
+
+            data[token] = {
+                token : token,
+                date : later
+            }
+            jsonfile.writeFile(coockie,data,{ spaces: 4, EOL: '\r\n' }, (err) => {
+                if (err) {
+                    return res.status(500).send("Server error!");
+                }
+                return res.status(200).send("You are logined");
+            })
+    
+            
+            
+        })
+
     })
-});
-
-
-
-
-
+})
 
 module.exports = router;

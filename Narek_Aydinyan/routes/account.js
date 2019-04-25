@@ -54,14 +54,17 @@ function validateName(name) {
 
 function authorization(req){
     var token = req.headers["token"];
-    var getReqId = req.query.userId;
-    var postReqId = req.body.userId
     var id;
     if(req.body && req.body.length !== 0){
         id = req.body.userId;
     }
     else{
-        id = req.query.userId;
+        if(req.query.userId !== null){
+            id = req.query.userId;
+        }
+        else{
+            return "Id is missing";
+        }
     }
     /*
     if(!getReqId && !postReqId){
@@ -79,7 +82,7 @@ function authorization(req){
             return "Server error";
         }
         if(obj3[token] !== id){
-            return "Bad request: Token Id pair don't match";
+            return "Token Id pair don't match";
         }
         return "OK";
     });
@@ -183,6 +186,7 @@ router.post('/signIn', function(req, res) {
                 if(err){
                     return res.status(500).send("Server error"); 
                 }
+                
                 obj5[token] = id;
                 jsonfile.writeFile(tokenIdPath, obj5,{spaces: 2, EOL:"\r\n"}, function(err) {
                     if(err) {
@@ -218,6 +222,40 @@ router.post('/signIn', function(req, res) {
                 });
             });
         }
+    });
+});
+
+router.get('/signOut', function(req, res) {
+    var contype = req.headers['content-type'];
+    if (!contype || contype.indexOf('application/json') !== 0) {
+        return res.status(400).send("Bad request: conten-type not application/json");
+    }
+    if(authorization(req) === "Server error"){
+        return res.status(500).send("Server error");
+    }
+    if(authorization(req) === "Id is missing"){
+        return res.status(400).send("Bad request: UserId is missing");
+    }
+    if(authorization(req) === "Token Id pair don't match"){
+        return res.status(400).send("Bad request: Token Id pair don't match");
+    }
+    let token = req.headers['token'];
+    jsonfile.readFile(tokenIdPath, function(err, obj6) {
+        if(err){
+            return res.status(500).send("Server error"); 
+        }
+        delete(obj6[token]);
+        console.log(obj6);
+       /* if(obj6 === {}){
+            return res.status(200).send("OK");
+        }*/
+        jsonfile.writeFile(tokenIdPath, obj6,{spaces: 2, EOL:"\r\n"}, function(err) {
+            console.log(obj6);
+            if(err){
+                return res.status(500).send("Server error"); 
+            }
+            return res.status(200).send("OK");
+        });
     });
 });
 

@@ -1,30 +1,43 @@
 const createError = require('http-errors');
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const path = require('path');
 const cookieParser = require('cookie-parser');
+
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const registerUser = require('./routes/register');
-const authenticate = require('./routes/authenticate')
+const booksRouter = require('./routes/books');
+const userRouter = require('./routes/registration');
+const loginRouter = require('./routes/authorization');
+
+
 
 const app = express();
 
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+ 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/registration', registerUser);
-app.use('/authenticate', authenticate);
+app.use('/index', indexRouter);
+app.use('/', loginRouter);
+//app.use('/', booksRouter);
+app.use('/', userRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

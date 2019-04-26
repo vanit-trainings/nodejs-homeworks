@@ -7,6 +7,8 @@ const TokenGenerator = require("uuid-token-generator");
 const userInfoPath = "./data/users.json";
 const logPassPath = "./data/logPassId.json";
 const tokenIdPath = "./data/tokenId.json";
+const tokenKey = "./data/.key.js";
+
 
 function validateLogin(login) {
     const regLog = new RegExp(/^((\w+)(\.|_)?){5,16}/);

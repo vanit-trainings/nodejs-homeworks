@@ -7,8 +7,48 @@ const TokenGenerator = require("uuid-token-generator");
 const userInfoPath = "./data/users.json";
 const logPassPath = "./data/logPassId.json";
 const tokenIdPath = "./data/tokenId.json";
-const tokenKey = "./data/.key.js";
+const Key = "./data/.key.js";
+const crypto = require('crypto');
 
+function sha512 (str, key){
+    let hash = crypto.createHmac("sha512", key);
+    hash.update(str);
+    const value = hash.digest('hex');
+    return value;
+};
+
+function getBearerToken (userId) {
+    let date = new Date();
+    let BearerToken = {};
+    let tokenInfo = {};
+    tokenInfo.userId = userId;
+    tokenInfo.iss = "accountRouter";
+    tokenInfo.expiresOn = Number(date.getTime()) + (2*60*60*1000);
+    BearerToken.info = tokenInfo;
+    const tokenStr = sha512(JSON.stringify(tokenInfo), Key.token);
+    BearerToken.sha512 = tokenStr;
+    return (new Buffer(JSON.stringify(BearerToken))).toString("base64");
+}
+
+function authentic (token) {
+    let statusCode, statusMessage;
+    const decodeStr = (Buffer.from(token, "base64").toString("ascii"));
+    const tokenParse = JSON.parse(decodeStr);
+    const hash = tokenParse.sha512;
+    const infoHash = sha512(JSON.stringify(tokenParse.info), Key.token);
+    let date = new Date();
+    if (hash !== infoHash || tokenParse.info.iss !== "accountRouter") {
+        statusCode = 401;
+        statusMessage = "Unauthorized";
+        return {statusCode, statusMessage};
+    }
+    if (tokenParse.info.expiresOn < date.getTime()) {
+        statusCode = 401;
+        statusMessage = "Token update required";
+        return {statusCode, statusMessage}; 
+    }
+    return "OK";
+}
 
 function validateLogin(login) {
     const regLog = new RegExp(/^((\w+)(\.|_)?){5,16}/);
@@ -144,7 +184,7 @@ router.post("/registr", function (req, res) {
                 }
                 else {
                     let logPass = {};    
-                    logPass.password = (new Buffer(req.body.password)).toString("base64");
+                    logPass.password = (sha512(req.body.password, Key.pass));
                     logPass.userId = id;
                     logPassDb[req.body.login] = logPass;
                     jsonfile.writeFile(logPassPath, logPassDb, {spaces: 2, EOL:"\r\n"}, function (err) {
@@ -167,7 +207,7 @@ router.post("/login", function(req, res) {
         if (err) {
             return res.status(500).send("Server error"); 
         }  
-        if (!logPassDb.hasOwnProperty(req.body.login) || logPassDb[req.body.login].password !== (new Buffer(req.body.password)).toString("base64")) {
+        if (!logPassDb.hasOwnProperty(req.body.login) || logPassDb[req.body.login].password !== (sha512(req.body.password, Key.pass))) {
             return res.status(401).send("Bad request: Enter valid login or password");
         }     
         else {

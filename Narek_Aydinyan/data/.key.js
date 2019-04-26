@@ -1,3 +1,4 @@
 module.exports = {
-    "key": "MenqEnqMerSarer@"
+    "token": "MenqEnqMerSarer@",
+    "pass":"Erankyuni"
   };

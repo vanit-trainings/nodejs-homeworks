@@ -2,22 +2,22 @@ const express = require("express");
 const uniqid = require("uniqid");
 const jsonfile = require("jsonfile");
 const router = express.Router();
-const TokenGenerator = require("uuid-token-generator");
+const crypto = require('crypto');
+const Key = require("../data/.key.js");
+//const TokenGenerator = require("uuid-token-generator");
 
 const userInfoPath = "./data/users.json";
 const logPassPath = "./data/logPassId.json";
 const tokenIdPath = "./data/tokenId.json";
-const Key = "./data/.key.js";
-const crypto = require('crypto');
 
-function sha512 (str, key){
-    let hash = crypto.createHmac("sha512", key);
+function sha512(str, key){
+    let hash = crypto.createHmac("sha512", new Buffer(key));
     hash.update(str);
     const value = hash.digest('hex');
     return value;
 };
 
-function getBearerToken (userId) {
+function getBearerToken(userId) {
     let date = new Date();
     let BearerToken = {};
     let tokenInfo = {};
@@ -30,24 +30,33 @@ function getBearerToken (userId) {
     return (new Buffer(JSON.stringify(BearerToken))).toString("base64");
 }
 
-function authentic (token) {
-    let statusCode, statusMessage;
-    const decodeStr = (Buffer.from(token, "base64").toString("ascii"));
-    const tokenParse = JSON.parse(decodeStr);
-    const hash = tokenParse.sha512;
-    const infoHash = sha512(JSON.stringify(tokenParse.info), Key.token);
+function IsJsonString(str) {
+    try {
+        let jsObj = JSON.parse(str);
+        return jsObj;
+    } 
+    catch (e) {
+        return false;
+    }
+}
+
+function validateToken(userToken) {
+    const decodeStr = (Buffer.from(userToken, "base64").toString("ascii"));
+    const tokenObj = IsJsonString(decodeStr);
+    if (tokenObj === false) {
+        return {"statusCode":401, "statusMessage":"Unauthorized"};
+    }
+    const hash = tokenObj.sha512;
+    const infoHash = sha512(JSON.stringify(tokenObj.info), Key.token);
     let date = new Date();
-    if (hash !== infoHash || tokenParse.info.iss !== "accountRouter") {
-        statusCode = 401;
-        statusMessage = "Unauthorized";
-        return {statusCode, statusMessage};
+    if (!hash === infoHash || !tokenObj.info.iss === "accountRouter") {
+        return {"statusCode":401, "statusMessage":"Unauthorized"};
     }
-    if (tokenParse.info.expiresOn < date.getTime()) {
-        statusCode = 401;
-        statusMessage = "Token update required";
-        return {statusCode, statusMessage}; 
+    if (tokenObj.info.expiresOn < date.getTime()) {
+        return {"statusCode":401, "statusMessage":"Token update required"};
+        
     }
-    return "OK";
+    return {"statusCode":"OK", "userId":tokenObj.info.userId};
 }
 
 function validateLogin(login) {
@@ -96,42 +105,6 @@ function validateName(name) {
     return (name === name.match(regName)[0]);
     }
     return false;
-}
-
-function authorization(req) {
-    const token = req.headers["token"];
-    let id;
-    if (req.body && req.body.length !== 0) {
-        id = req.body.userId;
-    }
-    else {
-        if (req.query.userId !== null) {
-            id = req.query.userId;
-        }
-        else {
-            return "Id is missing";
-        }
-    }
-    /*
-    if(!getReqId && !postReqId){
-        return "Bad request: Id missing";
-    }
-    if(getReqId){
-        id = getReqId;
-    }
-    if(postReqId){
-        id = postReqId;
-    }
-    */
-    jsonfile.readFile(tokenIdPath, function(err, obj3) {
-        if (err) {
-            return "Server error";
-        }
-        if (obj3[token] !== id) {
-            return "Token Id pair don't match";
-        }
-        return "OK";
-    });
 }
 
 function getUserInfoObj(info, id) {
@@ -183,13 +156,13 @@ router.post("/registr", function (req, res) {
                     return res.status(500).send("Server error");
                 }
                 else {
-                    let logPass = {};    
+                    let logPass = {};
                     logPass.password = (sha512(req.body.password, Key.pass));
                     logPass.userId = id;
                     logPassDb[req.body.login] = logPass;
                     jsonfile.writeFile(logPassPath, logPassDb, {spaces: 2, EOL:"\r\n"}, function (err) {
                         if (err) {
-                        return res.status(500).send("Server error");
+                            return res.status(500).send("Server error");
                         }
                         return res.status(200).send("OK");
                     });
@@ -212,23 +185,21 @@ router.post("/login", function(req, res) {
         }     
         else {
             const id = logPassDb[req.body.login].userId;
-            const token = (new TokenGenerator(256, TokenGenerator.BASE62)).generate();
-            jsonfile.writeFile(logPassPath, logPassDb, {spaces: 2, EOL:"\r\n"}, function (err) {
+            const token = getBearerToken(id);
+            jsonfile.readFile(tokenIdPath, function (err, tokenIdDb) {
                 if (err) {
                     return res.status(500).send("Server error");
                 }
-                jsonfile.readFile(tokenIdPath, function (err, tokenIdDb) {
+                jsonfile.writeFile(logPassPath, logPassDb, {spaces: 2, EOL:"\r\n"}, function (err) {
                     if (err) {
                         return res.status(500).send("Server error"); 
                     }
-                    let idDate = {};
-                    idDate.userId = id;
-                    tokenIdDb.token = idDate;
+                    tokenIdDb[id] = token;
                     jsonfile.writeFile(tokenIdPath, tokenIdDb, {spaces: 2, EOL:"\r\n"}, function (err) {
                         if (err) {
                             return res.status(500).send("Server error");
                         }
-                        res.writeHead(200, {"token":token});
+                        res.writeHead(200, {"bearerToken":token});
                         res.write("OK");
                         res.end();
                         return res.send();
@@ -240,26 +211,69 @@ router.post("/login", function(req, res) {
 });
 
 router.get("/logout", function (req, res) {
-    if (authorization(req) === "Server error") {
-        return res.status(500).send("Server error");
+    const token = req.headers["authorizationbearer"];
+    const tokenValid = validateToken(token);
+    if (tokenValid.statusCode !== "OK") {
+            return res.status(tokenValid.statusCode).send(tokenValid.statusMessage);
     }
-    if (authorization(req) === "Id is missing") {
-        return res.status(400).send("Bad request: UserId is missing");
-    }
-    if (authorization(req) === "Token Id pair don't match") {
-        return res.status(400).send("Bad request: Token Id pair don't match");
-    }
-    const token = req.headers["token"];
     jsonfile.readFile(tokenIdPath, function (err, tokenIdDb) {
         if (err) {
             return res.status(500).send("Server error"); 
         }
-        delete(tokenIdDb[token]);
+        delete(tokenIdDb[tokenValid.userId]);
         jsonfile.writeFile(tokenIdPath, tokenIdDb, {spaces: 2, EOL:"\r\n"}, function (err) {
             if (err) {
                 return res.status(500).send("Server error"); 
             }
             return res.status(200).send("OK");
+        });
+    });
+});
+
+router.get("/myInfo", function (req, res) {
+    const token = req.headers["authorizationbearer"];
+    const tokenValid = validateToken(token);
+    if (tokenValid.statusCode !== "OK") {
+        return res.status(tokenValid.statusCode).send(tokenValid.statusMessage);
+    }
+    jsonfile.readFile(userInfoPath, function (err, userInfoDb) {
+        if (err) {
+            return res.status(500).send("Server Error");
+        }
+        const info = userInfoDb[tokenValid.userId];
+        jsonfile.writeFile(userInfoPath, userInfoDb, {spaces: 2, EOL:"\r\n"}, function (err) {
+            if (err) {
+                return res.status(500).send("Server Error");
+            }
+            return res.status(200).send(JSON.stringify(info));
+        });
+    });
+});
+
+router.get("/UserInfo", function (req, res) {
+    const token = req.headers["authorizationbearer"];
+    const tokenValid = validateToken(token);
+    if (tokenValid.statusCode !== "OK") {
+        return res.status(tokenValid.statusCode).send(tokenValid.statusMessage);
+    }
+    jsonfile.readFile(userInfoPath, function (err, userInfoDb) {
+        if (err) {
+            return res.status(500).send("Server Error");
+        }
+        let id = req.query.userId;
+        if (!id) {
+            id = tokenValid.userId;
+        }
+        const info = userInfoDb[id];
+        console.log(id);
+        if (!info) {
+            return res.status(404).send("User not found");
+        }
+        jsonfile.writeFile(userInfoPath, userInfoDb, {spaces: 2, EOL:"\r\n"}, function (err) {
+            if (err) {
+                return res.status(500).send("Server Error");
+            }
+            return res.status(200).send(JSON.stringify(info));
         });
     });
 });

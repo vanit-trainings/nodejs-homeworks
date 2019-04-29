@@ -12,7 +12,7 @@ const tokenIdPath = "./data/tokenId.json";
 function sha512(str, key){
     let hash = crypto.createHmac("sha512", new Buffer(key));
     hash.update(str);
-    const value = hash.digest('hex');
+    const value = hash.digest("hex");
     return value;
 };
 

@@ -97,12 +97,12 @@ router.get('/authenticate/v1', function(req, res) {
         const currentDate = new Date().getHours();
         if(obj[token].expDate < currentDate) {
             delete obj[token];
-            jsonfile.writeFile(tokensPaht, tokens, {spaces : 2, EOL : '\r\n'}, function(err, obj) {
+            jsonfile.writeFile(tokensPaht, obj, {spaces : 2, EOL : '\r\n'}, function(err, obj) {
                 if(err) {
                     return res.status(500).send(`SERVER ERROR`);
                 }
-                return res.status(401).send(`UNAUTHORIZED USER`);
             })
+			return res.status(401).send(`UNAUTHORIZED USER`);
         }
         jsonfile.readFile(filePath, function(err, user) {
             if(err) {

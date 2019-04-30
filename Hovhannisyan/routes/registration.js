@@ -1,7 +1,10 @@
+
 const express = require('express');
 const router = express.Router();
 const jsonfile = require('jsonfile');
 const filepath = "./data/users.json";
+const crypto = require('crypto');
+const hash = crypto.createHash('sha512');
 function validateUsername(username) {
     var usernameRegex = /^[a-zA-Z\-]+$/;
     return usernameRegex.test(username)
@@ -15,7 +18,11 @@ function validateEmail(email){
     var mail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return mail.test(email)
 }   
-
+function toCode(a){
+    data = hash.update(a, 'utf-8');
+    gen_hash= data.digest('hex');
+    return "hash : " + gen_hash;
+}
 router.post('/', function (req, res) {
     jsonfile.readFile(filepath, function (err, obj) {
         if (err) {
@@ -33,7 +40,8 @@ router.post('/', function (req, res) {
         
         obj[req.body.username] = {
             username : req.body.username,
-            password: Buffer.from(req.body.password).toString('base64'),//kodavorel
+            password : toCode(req.body.password),
+            //password: Buffer.from(req.body.password).toString('base64'),//kodavorel
             email: req.body.email
 
         };

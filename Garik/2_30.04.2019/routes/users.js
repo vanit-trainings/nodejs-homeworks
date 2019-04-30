@@ -5,7 +5,6 @@ const uniqId = require('uniqid');
 var users = './data/users.json';
 var token = './data/token.json';
 
-//status coder@ sxala
 validUserName = (value) => {
     return value.match(/^([a-z]|[A-Z]|[-]|[_]){1,10}$/)
 }
@@ -32,7 +31,7 @@ router.post('/register', function(req, res) {
             res.status(500).send('Server error');
         }else{
             if(obj.users[req.body.userName]){
-                res.status(400).send('repeat userName');
+                res.status(409).send('Enter valid userName');
             }else{
                 obj.users[req.body.userName] = {
                     'userName' : req.body['userName'],   
@@ -58,7 +57,7 @@ router.post('/login', function(req, res) {
         }else{
             if(!obj.users[req.body.userName] || 
                 !(obj.users[req.body.userName].password === Buffer.from(req.body['password']).toString('base64'))){
-                return res.send('user not found');
+                return res.status(404).send('user not found');
             }
             req.headers.token = {
                 token : creteToken(req.body.userName),
@@ -100,14 +99,14 @@ router.get('/authorized/v1/userInfo', function(req, res) {
                             if(err){
                                 res.status(500).send('Server error');
                             }else{
-                                res.status(200).send(usersObj.users[userName].userInfo);
+                                res.status(200).send(`${userName}${usersObj.users[userName].userInfo}`);
                             }
                         })
                     }else{
-                        res.send('users/login')
+                        res.status(401).send('users/login');
                     }
                 }else{
-                    res.status(401).send('invalid token');
+                    res.status(401).send('Unauthorized');
                 }
             }
         })
@@ -116,7 +115,7 @@ router.get('/authorized/v1/userInfo', function(req, res) {
 //logout
 router.delete('/logout', function(req, res) {
     if(!req.headers.token){
-        res.status(401).send('no token');
+        res.status(401).send('Unauthorized');
     }else{
         jsonfile.readFile(token, 'utf-8', function(err, tokenObj){
             if(err){
@@ -132,7 +131,7 @@ router.delete('/logout', function(req, res) {
                         }
                     })
                 }else{
-                    res.status(401).send('invalid token');
+                    res.status(401).send('Unauthorized');
                 }
             }
         })

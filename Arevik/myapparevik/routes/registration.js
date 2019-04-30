@@ -4,6 +4,7 @@ const express = require('express');
 const router = express();
 const jsonfile = require('jsonfile');
 const users ='./data/user.json';
+const usersLogin ='./data/login.json';
 
 function validateUsers(users) {
     const schema = {
@@ -31,7 +32,25 @@ router.post('/', (req, res) => {
             res.status(200).send("OK");
 			console.log(data);
         })
-	})
+        jsonfile.writeFile(usersLogin, data, (err, data) => {
+            if(err) return res.status(500).send("EXTERNAL SERVER ERROR");
+            res.status(200).send("OK");
+			console.log(data);
+        })
+    })
 })
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
+ 
+ console.log(makeid(5));
+
 
 module.exports = router;

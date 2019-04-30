@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const jsonfile = require('jsonfile');
 const users = "./data/users.json";
-const userLogin = "./data/user.json";
+const userLogin = "./data/userLog.json";
 
 function isvVlidUsernameOrPasswoord(usernameOrPassword) {
 	const reg = new RegExp(/^[a-zA-Z][a-z0-9-_]{2,16}/);
 	return reg.test(usernameOrPassword);
 }
+
 
 router.post('/', function (req, res) {
 	jsonfile.readFile(users, function (err, obj) {
@@ -24,9 +25,16 @@ router.post('/', function (req, res) {
 		obj[req.body.username] = {
 			username: req.body.username,
 			password: req.body.password
+
 		};
+		let obj2 = {};
+		obj2[req.body.username] = {
+			username: req.body.username,
+			password: req.body.password,
+			token: token(5),
+			date: new Date().getTime()
 
-
+		};
 		jsonfile.writeFile(users, obj, function (err) {
 			if (err) {
 				console.log(err);
@@ -34,13 +42,8 @@ router.post('/', function (req, res) {
 			}
 			return res.status(200).send("ok");
 		});
-		jsonfile.readFile(userLogin, function (err, obj2) {
-			obj2[req.body.username] = {
-				username: req.body.username,
-				password: req.body.password,
-				token: token(5),
-				date: new Date().getTime()
-			};
+		jsonfile.readFile(userLogin, function (err, obj) {
+
 
 			jsonfile.writeFile(userLogin, obj2, function (err) {
 
@@ -63,17 +66,18 @@ router.post('/login', function (req, res) {
 			}
 			return res.status(200).send("ok");
 		});
-		jsonfile.readFile(userLogin, function (err, obj2) {
-
+		jsonfile.readFile(userLogin, function (err, obj) {
+			let obj2 = {};
 			obj2[req.body.username] = {
 				username: req.body.username,
 				password: req.body.password,
 				token: token(),
 				date: new Date().getTime()
+
 			};
 
 			jsonfile.writeFile(userLogin, obj2, function (err) {
-				if (req.body.username === obj2[req.body.username].username && req.body.password === obj2[req.body.username].password) {
+				if (req.body.username === obj[req.body.username].username && req.body.password === obj[req.body.username].password) {
 					expiredDate();
 				} else {
 					return res.status(400).send("bad reques1t");
@@ -87,7 +91,6 @@ router.post('/login', function (req, res) {
 		})
 	})
 })
-
 router.delete('/logout/:username', function (req, res) {
 	jsonfile.readFile(userLogin, function (err, obj2) {
 		if (err) {
@@ -126,5 +129,5 @@ function token(length) {
 	}
 	return result;
 }
-//visual studuio kod 
+
 module.exports = router;

@@ -60,7 +60,7 @@ function validateToken(userToken) {
 
 function validateLogin(login) {
     const regLog = new RegExp(/^((\w+)(\.|_)?){5,16}/);
-    if (login.match(regLog)[0] !== null) {
+    if (login.match(regLog) !== null) {
         return (login === login.match(regLog)[0]);
     }
     return false;

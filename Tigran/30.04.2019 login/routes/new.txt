@@ -1,0 +1,57 @@
+
+function genarateABC(){
+	let abc = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	let tazaABC = [];
+	abc = abc.split("");
+	for(let i = 62;i>0;i--){
+		let randomLetter = Math.round(Math.random()*(i-1));
+		Math.round(randomLetter);
+		tazaABC.push(abc[randomLetter]);
+		abc.splice(randomLetter,1);
+		//console.log(randomLetter)
+	}
+	//console.log(tazaABC);
+	return tazaABC;
+}
+//genarateABC();
+
+let secretKey = genarateABC();
+
+function RandomABCStugox(arr){
+	for(let i in arr){
+		if(arr.lastIndexOf(arr[i]) === (61 - arr.indexOf(arr[i]))){
+			console.log("false")
+			return
+		}
+		continue;
+	}
+	console.log("true");
+}
+//RandomABCStugox(genarateABC());
+
+function tokenGenerate(username){
+	let abc = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	let secret = secretKey;
+	let token = [];
+	for(let i in username){
+		
+		token[i] = secret[abc.indexOf(username[i])];
+	}
+	console.log("token@ "  + token.join(""));
+	return token.join("");
+}
+
+
+function tokenDeCode(token){
+	let abc = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	let secret = secretKey;
+	let username = [];
+	for(let i in token){
+		
+		username[i] = abc[secret.indexOf(token[i])];
+	}
+	console.log("username@ " + username.join(""));
+}
+let token1 = tokenGenerate("11112222abb");
+
+tokenDeCode(token1);

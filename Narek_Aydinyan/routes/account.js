@@ -231,10 +231,8 @@ router.post('/login', function (req, res) {
                     if (err) {
                         return res.status(badrequest).json({ statusMessage: 'Server error' });
                     }
-                    res.writeHead(allok, { bearerToken: token });
-                    res.write('{ "statusMessage": "OK" }');
-                    res.end();
-                    return res.send();
+                    res.setHeader("bearerToken", token);
+                    return res.json({ "statusMessage": "OK" });
                 });
             });
         });

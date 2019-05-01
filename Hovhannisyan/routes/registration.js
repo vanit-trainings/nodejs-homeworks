@@ -8,40 +8,49 @@ const filepath = './data/users.json';
 const crypto = require('crypto');
 
 const hash = crypto.createHash('sha512');
-
-function validateUsername(username) {
-    const usernameRegex = /^[a-zA-Z\-]+$/;
+const serverError = 500;
+const badRequest = 400;
+const OK = 200;
+const three = 3;
+const validateUsername = function validateUsername(username) {
+    const usernameRegex = /^[a-zA-Z]+$/;
 
     return usernameRegex.test(username);
-}
-function validatePass(password) {
+};
+
+const validatePass = function validatePass(password) {
     const passw = /^[A-Za-z]\w{7,15}$/;
 
     return passw.test(password);
-}
-function validateEmail(email) {
-    const mail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+};
+
+const validateEmail = function validateEmail(email) {
+    const mail = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
 
     return mail.test(email);
-}
-function toCode(a) {
-    data = hash.update(a, 'utf-8');
-    gen_hash = data.digest('hex');
-    return `hash : ${gen_hash}`;
-}
+};
+
+const toCode = (a) => {
+    const data = hash.update(a, 'utf-8');
+    const genHash = data.digest('hex');
+
+    return `hash : ${genHash}`;
+};
+
+
 router.post('/', (req, res) => {
-    jsonfile.readFile(filepath, (err, obj) => {
-        if (err) {
-            return res.status(500).send('Server error');
+    jsonfile.readFile(filepath, (err1, obj) => {
+        if (err1) {
+            return res.status(serverError).send('Server error');
         }
         if (!validateUsername(req.body.username) || !validatePass(req.body.password) || !validateEmail(req.body.email)) {
-            return res.status(400).send('bad request');
+            return res.status(badRequest).send('bad request');
         }
-        if (Object.keys(req.body).length !== 3) {
-            return res.status(400).send('bad request');
+        if (Object.keys(req.body).length !== three) {
+            return res.status(badRequest).send('bad request');
         }
         if (obj[ req.body.username ]) {
-            return res.status(400).send('Username is already existed');
+            return res.status(badRequest).send('Username is already existed');
         }
         
         obj[ req.body.username ] = {
@@ -53,9 +62,9 @@ router.post('/', (req, res) => {
         };
         jsonfile.writeFile(filepath, obj, { spaces: 4, EOL: '\r\n' }, (err) => {
             if (err) {
-                return res.status(500).send('Server error');
+                return res.status(serverError).send('Server error');
             }
-            return res.status(200).send('ok');
+            return res.status(OK).send('ok');
         });
     });
 });

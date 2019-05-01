@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+#eslint
+.eslintrc.js
+
 # production
 /build
 

@@ -54,6 +54,9 @@ const ToJsonString = function(str) {
 };
 
 const validateToken = function(userToken) {
+    if (userToken === undefined) {
+        return res.status(unauthorized).json({ statusMessage: 'Unauthorized' }); 
+    }
     const decodeStr = (Buffer.from(userToken, 'base64').toString('ascii'));
     const tokenObj = ToJsonString(decodeStr);
 
@@ -261,6 +264,9 @@ router.get('/logout', function(req, res) {
 
 router.get('/userinfo', function(req, res) {
     const token = req.headers.authorizationbearer;
+    if (token === undefined) {
+        return res.status(unauthorized).json({ statusMessage: 'Unauthorized' }); 
+    }
     const tokenValid = validateToken(token);
 
     if (tokenValid.statusCode !== allok) {

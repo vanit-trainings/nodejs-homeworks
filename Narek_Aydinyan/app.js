@@ -26,7 +26,8 @@ app.use('/account', accountRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+  return res.status(404).json({ statusMessage: 'Not found' });
+  //next(createError(404));
 });
 
 // error handler

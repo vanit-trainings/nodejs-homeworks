@@ -260,7 +260,6 @@ router.post('/login', function (req, res) {
 });
 
 router.get('/logout', function(req, res) {
-    //const token = req.headers.authorization;
     const tokenValid = validateToken(req.headers.authorization);
 
     if (tokenValid.statusCode !== allok) {
@@ -351,7 +350,7 @@ router.get('/refreshtoken', function(req, res) {
         return res.status(tokenValid.statusCode).json({ statusMessage: 'Your token doesnt need to be refreshed' });
     }
     if (basicToken === undefined) {
-        return res.status(unauthorized).json({ statusMessage: 'Unauthorized' });
+        return res.status(412).json({ statusMessage: 'Basic token is missing' });
     }
     jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
         if (err) {

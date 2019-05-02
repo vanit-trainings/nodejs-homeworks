@@ -255,7 +255,8 @@ router.post('/login', (req, res) => {
             if (err) {
                 return res.status(serverError).json({ statusMessage: 'Server error' });
             }
-            let userid = {};
+            const userid = {};
+
             userid.id = id;
             tokenId[ token ] = userid;
             jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
@@ -334,21 +335,24 @@ router.get('/userinfo', (req, res) => {
 router.get('/checkingToken', (req, res) => {
     const token = req.headers.authorization;
     const tokenValidation = validateToken(token);
-    if(tokenValidation === ok) {
+
+    if (tokenValidation === ok) {
         return res.status(tokenValidation.statusCode).json('Token does not need to be updated');
     }
-    if(tokenValidation !== ok && tokenValidation !== update) {
+    if (tokenValidation !== ok && tokenValidation !== update) {
         return res.status(tokenValidation.statusCode).json(tokenValidation.statusMessage);
     }
     const checkingToken = crypto.randomBytes(15).toString('hex');
+
     jsonfile.readFile(tokenIdPath, (err, tokenId) => {
         if (err) {
             return res.status(serverError).json({ statusMessage: 'Server error' });
         }
-        let token = tokenId[ req.headers.authorization.substring(7) ];
-        token[ 'checkingToken' ] = checkingToken;
+        const token = tokenId[ req.headers.authorization.substring(7) ];
+
+        token.checkingToken = checkingToken;
         tokenId[ req.headers.authorization.substring(7) ] = token;
-        jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, function(err) {
+        jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
             if (err) {
                 return res.status(serverError).json({ statusMessage: 'Server error' });
             }
@@ -361,32 +365,35 @@ router.get('/checkingToken', (req, res) => {
 router.get('/updatedToken', (req, res) => {
     const token = req.headers.authorization;
     const tokenValidation = validateToken(token);
-    if(tokenValidation === ok) {
+
+    if (tokenValidation === ok) {
         return res.status(tokenValidation.statusCode).json('Token does not need to be updated');
     }
-    if(tokenValidation !== ok && tokenValidation !== update) {
+    if (tokenValidation !== ok && tokenValidation !== update) {
         return res.status(tokenValidation.statusCode).json(tokenValidation.statusMessage);
     }
     const checkingToken = req.headers.checking;
-    if(checkingToken === undefined) {
+
+    if (checkingToken === undefined) {
         return res.status().json({});
     }
     jsonfile.readFile(tokenIdPath, (err, tokenId) => {
         if (err) {
-            return res.status(servererror).json({ statusMessage: 'Server error' });
+            return res.status(serverError).json({ statusMessage: 'Server error' });
         }
-        let tokenObj = tokenId[ req.headers.authorization.substring(7) ];
-        if (tokenObj[ 'checkingToken' ] !== checkingToken) {
+        const tokenObj = tokenId[ req.headers.authorization.substring(7) ];
+
+        if (tokenObj.checkingToken !== checkingToken) {
             return res.status(unauthorized).json({ statusMessage: 'Unauthorized' });
         }
-        const userId = tokenObj.userId;
+        const { userId } = tokenObj;
         const newToken = getToken(userId);
         const newTokenObj = {};
         
-        delete(tokenId[ req.headers.authorization.substring(7) ]);
-        newTokenObj['userId'] = userId;
+        delete (tokenId[ req.headers.authorization.substring(7) ]);
+        newTokenObj.userId = userId;
         tokenId[ newToken ] = newTokenObj;
-        jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, function(err) {
+        jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
             if (err) {
                 return res.status(serverError).json({ statusMessage: 'Server error' });
             }

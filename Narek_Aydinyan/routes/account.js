@@ -15,6 +15,7 @@ const badrequest = 400;
 const unauthorized = 401;
 const notfound = 404;
 const conflict = 409;
+const preconditionfailed = 412;
 const updaterequired = 426;
 const servererror = 500;
 
@@ -350,7 +351,7 @@ router.get('/refreshtoken', function(req, res) {
         return res.status(tokenValid.statusCode).json({ statusMessage: 'Your token doesnt need to be refreshed' });
     }
     if (basicToken === undefined) {
-        return res.status(412).json({ statusMessage: 'Basic token is missing' });
+        return res.status(preconditionfailed).json({ statusMessage: 'Basic token is missing' });
     }
     jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
         if (err) {

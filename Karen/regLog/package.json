@@ -7,11 +7,17 @@
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
+    "crypto-js": "^3.1.9-1",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
-    "uniqid": "^5.0.3"
+    "uniqid": "^5.0.3",
+    "validator": "^10.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-plugin-react": "^7.12.4"
   }
 }

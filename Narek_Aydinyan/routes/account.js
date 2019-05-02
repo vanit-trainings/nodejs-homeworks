@@ -28,9 +28,7 @@ const sha512 = function(str, key) {
 
 const getBearerToken = function(userId) {
     const date = new Date();
-
     const BearerToken = {};
-
     const tokenInfo = {};
 
     tokenInfo.userId = userId;
@@ -57,7 +55,7 @@ const validateToken = function(userToken) {
     if (userToken === undefined) {
         return res.status(unauthorized).json({ statusMessage: 'Unauthorized' }); 
     }
-    const decodeStr = (Buffer.from(userToken, 'base64').toString('ascii'));
+    const decodeStr = (Buffer.from(userToken.substring(7), 'base64').toString('ascii'));
     const tokenObj = ToJsonString(decodeStr);
 
     if (tokenObj === undefined) {
@@ -138,6 +136,19 @@ const getUserInfoObj = function(info, id) {
     return data;
 };
 
+const isSignIn = function(id, data){
+    let count = 0;
+    for (const key in data) {
+        if (data[ key ].userId === id) {
+            count++;
+        }
+    }
+    if (count >= 3) {
+        return false;
+    }
+    return true;
+}
+
 const validateRegistrReq = function(req) {
     if (Object.keys(req.body).length === 0) {
         return { statusCode: badrequest, statusMessage: { statusMessage: 'Body is Empty' } };
@@ -162,7 +173,6 @@ const validateRegistrReq = function(req) {
 
 router.post('/register', function(req, res) {
     const Status = validateRegistrReq(req);
-
 
     if (Status.statusCode !== allok) {
         return res.status(Status.statusCode).json(Status.statusMessage);
@@ -226,15 +236,22 @@ router.post('/login', function (req, res) {
                 if (err) {
                     return res.status(badrequest).json({ statusMessage: 'Server error' });
                 }
-                tokenIdDb[ id ] = token;
+                const signInStatus = isSignIn(id, tokenIdDb);
+    
+                if (signInStatus) {
+                    const tokObj = {};
+                    tokObj.userId = id;
+                    tokenIdDb[ token ] = tokObj;
+                }
                 jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
                     if (err) {
                         return res.status(badrequest).json({ statusMessage: 'Server error' });
                     }
-                    res.writeHead(allok, { bearerToken: token });
-                    res.write('{ "statusMessage": "OK" }');
-                    res.end();
-                    return res.send();
+                    if (signInStatus) {
+                        res.setHeader('bearerToken', token);
+                        return res.status(allok).json({ 'statusMessage': 'OK' });
+                    }
+                    return res.status(conflict).json({ 'statusMessage': 'You are already logged in' });
                 });
             });
         });
@@ -242,7 +259,7 @@ router.post('/login', function (req, res) {
 });
 
 router.get('/logout', function(req, res) {
-    const token = req.headers.authorizationbearer;
+    const token = req.headers.authorization;
     const tokenValid = validateToken(token);
 
     if (tokenValid.statusCode !== allok) {
@@ -252,7 +269,8 @@ router.get('/logout', function(req, res) {
         if (err) {
             return res.status(badrequest).json({ statusMessage: 'Server error' });
         }
-        delete (tokenIdDb[ tokenValid.userId ]);
+        delete (tokenIdDb[ token.substring(7) ]);
+    
         jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
             if (err) {
                 return res.status(badrequest).json({ statusMessage: 'Server error' });
@@ -263,7 +281,8 @@ router.get('/logout', function(req, res) {
 });
 
 router.get('/userinfo', function(req, res) {
-    const token = req.headers.authorizationbearer;
+    const token = req.headers.authorization;
+    
     if (token === undefined) {
         return res.status(unauthorized).json({ statusMessage: 'Unauthorized' }); 
     }
@@ -282,7 +301,7 @@ router.get('/userinfo', function(req, res) {
             id = tokenValid.userId;
         }
         const info = userInfoDb[ id ];
-
+        
         if (!info) {
             return res.status(notfound).json({ statusMessage: 'User not found' });
         }

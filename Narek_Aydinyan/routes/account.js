@@ -19,7 +19,7 @@ const updaterequired = 426;
 const servererror = 500;
 
 const sha512 = function(str, key) {
-    const hash = crypto.createHmac('sha512', new Buffer(key));
+    const hash = crypto.createHmac('sha512', Buffer.from(key));
 
     hash.update(str);
     const value = hash.digest('hex');
@@ -39,7 +39,7 @@ const getBearerToken = function(userId) {
     const tokenStr = sha512(JSON.stringify(tokenInfo), Key.token);
 
     BearerToken.sha512 = tokenStr;
-    return (new Buffer(JSON.stringify(BearerToken))).toString('base64');
+    return (Buffer.from(JSON.stringify(BearerToken))).toString('base64');
 };
 
 const ToJsonString = function(str) {
@@ -313,11 +313,13 @@ router.get('/userinfo', function(req, res) {
 router.get('/basictoken', function(req, res) {
     const tokenValid = validateToken(req.headers.authorization);
 
-    if (tokenValid.statusCode !== allok || updaterequired) {
+    if (tokenValid.statusCode !== allok && tokenValid.statusCode !== updaterequired) {
+        console.log("if1");
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
     if (tokenValid.statusCode === allok) {
-        return res.status(tokenValid.statusCode).json({ statusMessage: 'OK' });
+        console.log("if2");
+        return res.status(tokenValid.statusCode).json({ statusMessage: 'Your token doesnt need to be refreshed' });
     }
     const basicToken = crypto.randomBytes(15).toString('hex');
 
@@ -342,11 +344,11 @@ router.get('/refreshtoken', function(req, res) {
     const tokenValid = validateToken(req.headers.authorization);
     const basicToken = req.headers.basic;
 
-    if (tokenValid.statusCode !== allok || updaterequired) {
+    if (tokenValid.statusCode !== allok && tokenValid.statusCode !== updaterequired) {
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
     if (tokenValid.statusCode === allok) {
-        return res.status(tokenValid.statusCode).json({ statusMessage: 'OK' });
+        return res.status(tokenValid.statusCode).json({ statusMessage: 'Your token doesnt need to be refreshed' });
     }
     if (basicToken === undefined) {
         return res.status(unauthorized).json({ statusMessage: 'Unauthorized' });

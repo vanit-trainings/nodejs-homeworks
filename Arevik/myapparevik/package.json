@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
@@ -14,8 +15,15 @@
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "joi": "^14.3.1",
+    "joi-objectid": "^2.0.0",
     "jsonfile": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.5",
     "morgan": "~1.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.0.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^1.10.3"
   }
 }

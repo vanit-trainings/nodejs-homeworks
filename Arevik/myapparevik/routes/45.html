@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function light(sw) {
+  var pic;
+  if (sw == 0) {
+    pic = "http://bestanimations.com/Nature/Storms/red-lightning-bolt-cloud-sky-storm-animated-gif.gif"
+  } else {
+    pic = "http://bestanimations.com/Nature/Storms/lightning-storm-flashes-bats-flying-animated-gif.gif"
+  }
+  document.getElementById('http://bestanimations.com/Nature/Storms/lightning-storm-flashes-bats-flying-animated-gif.gif').src = pic;
+}
+</script>
+
+<img id="http://bestanimations.com/Nature/Storms/lightning-storm-flashes-bats-flying-animated-gif.gif" src="http://bestanimations.com/Nature/Storms/lightning-storm-flashes-bats-flying-animated-gif.gif" width="500px" height="700px">
+
+<p>
+<button type="button" onclick="light(1)">1</button>
+<button type="button" onclick="light(0)">2</button>
+</p>
+
+</body>
+</html>

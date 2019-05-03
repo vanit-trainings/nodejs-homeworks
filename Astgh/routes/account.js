@@ -16,6 +16,7 @@ const badRequest = 400;
 const unauthorized = 401;
 const notFound = 404;
 const conflict = 409;
+const update = 412;
 const serverError = 500;
 
 const validateLogin = function(login) {
@@ -126,7 +127,7 @@ const hash = function(str, key) {
     return value;
 };
 
-const setToken = function(id) {
+const getToken = function(id) {
     const date = new Date();
     const content = {};
     const token = {};
@@ -155,7 +156,7 @@ const validateToken = function(token) {
     if (token === undefined) {
         return res.status(unauthorized).json({ statusMessage: 'Unauthorized' });
     }
-    const decodedStr = (Buffer.from(token, 'base64').toString('ascii'));
+    const decodedStr = (Buffer.from(token.substring(7), 'base64').toString('ascii'));
     const tokenJsonObj = jsonString(decodedStr);
     
     if (tokenJsonObj === undefined) {
@@ -169,7 +170,7 @@ const validateToken = function(token) {
         return { statusCode: unauthorized, statusMessage: { statusMessage: 'Unauthorized' } };
     }
     if (tokenJsonObj.info.limitation < date.getTime()) {
-        return { statusCode: unauthorized, statusMessage: { statusMessage: 'Token needs to be updated' } };
+        return { statusCode: update, statusMessage: { statusMessage: 'Token needs to be updated' } };
     }
     return { statusCode: ok, id: tokenJsonObj.info.id };
 };
@@ -248,13 +249,16 @@ router.post('/login', (req, res) => {
         }
 
         const id = logPass[ req.body.login ].userId;
-        const token = setToken(id);
+        const token = getToken(id);
 
         jsonfile.readFile(tokenIdPath, (err, tokenId) => {
             if (err) {
                 return res.status(serverError).json({ statusMessage: 'Server error' });
             }
-            tokenId[ token ] = id;
+            const userid = {};
+
+            userid.id = id;
+            tokenId[ token ] = userid;
             jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
                 if (err) {
                     return res.status(serverError).json({ statusMessage: 'Server error' });
@@ -263,7 +267,7 @@ router.post('/login', (req, res) => {
                     if (err) {
                         return res.status(serverError).json({ statusMessage: 'Server error' });
                     }
-                    res.setHeader('token', token);
+                    res.getHeader('token', token);
                     return res.json({ statusMessage: 'OK' });
                 });
             });
@@ -283,7 +287,7 @@ router.get('/logOut', (req, res) => {
         if (err) {
             return res.status(serverError).json({ statusMessage: 'Server error' });
         }
-        delete (tokenId[ token ]);
+        delete (tokenId[ token.substring(7) ]);
         jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
             if (err) {
                 return res.status(serverError).json({ statusMessage: 'Server error' });
@@ -294,13 +298,13 @@ router.get('/logOut', (req, res) => {
 });
 
 router.get('/userinfo', (req, res) => {
-    const { userId } = req.query;
+    const uId = req.query.userId;
 
     let id = req.query.clientId;
     const token = req.headers.authorization;
 
     if (id === undefined) {
-        id = userId;
+        id = uId;
     }
 
     const tokenValidation = validateToken(token);
@@ -324,6 +328,77 @@ router.get('/userinfo', (req, res) => {
                 return res.status(notFound).json({ statusMessage: 'User not found' });
             }
             return res.status(ok).json(data);
+        });
+    });
+});
+
+router.get('/checkingToken', (req, res) => {
+    const token = req.headers.authorization;
+    const tokenValidation = validateToken(token);
+
+    if (tokenValidation === ok) {
+        return res.status(tokenValidation.statusCode).json('Token does not need to be updated');
+    }
+    if (tokenValidation !== ok && tokenValidation !== update) {
+        return res.status(tokenValidation.statusCode).json(tokenValidation.statusMessage);
+    }
+    const checkingToken = crypto.randomBytes(15).toString('hex');
+
+    jsonfile.readFile(tokenIdPath, (err, tokenId) => {
+        if (err) {
+            return res.status(serverError).json({ statusMessage: 'Server error' });
+        }
+        const token = tokenId[ req.headers.authorization.substring(7) ];
+
+        token.checkingToken = checkingToken;
+        tokenId[ req.headers.authorization.substring(7) ] = token;
+        jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
+            if (err) {
+                return res.status(serverError).json({ statusMessage: 'Server error' });
+            }
+            res.setHeader('checkingtoken', checkingToken);
+            return res.status(ok).json({ statusMessage: 'OK' });
+        });
+    });
+});
+
+router.get('/updatedToken', (req, res) => {
+    const token = req.headers.authorization;
+    const tokenValidation = validateToken(token);
+
+    if (tokenValidation === ok) {
+        return res.status(tokenValidation.statusCode).json('Token does not need to be updated');
+    }
+    if (tokenValidation !== ok && tokenValidation !== update) {
+        return res.status(tokenValidation.statusCode).json(tokenValidation.statusMessage);
+    }
+    const checkingToken = req.headers.checking;
+
+    if (checkingToken === undefined) {
+        return res.status().json({});
+    }
+    jsonfile.readFile(tokenIdPath, (err, tokenId) => {
+        if (err) {
+            return res.status(serverError).json({ statusMessage: 'Server error' });
+        }
+        const tokenObj = tokenId[ req.headers.authorization.substring(7) ];
+
+        if (tokenObj.checkingToken !== checkingToken) {
+            return res.status(unauthorized).json({ statusMessage: 'Unauthorized' });
+        }
+        const { userId } = tokenObj;
+        const newToken = getToken(userId);
+        const newTokenObj = {};
+        
+        delete (tokenId[ req.headers.authorization.substring(7) ]);
+        newTokenObj.userId = userId;
+        tokenId[ newToken ] = newTokenObj;
+        jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
+            if (err) {
+                return res.status(serverError).json({ statusMessage: 'Server error' });
+            }
+            res.setHeader('updatedToken', newToken);
+            return res.status(ok).json({ statusMessage: 'OK' });
         });
     });
 });

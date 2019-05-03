@@ -9,7 +9,7 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/user');
-const booksRouter = require('./routes/books');
+const booksRouter = require('./routes/base_model');
 const userRouter = require('./routes/registration');
 const loginRouter = require('./routes/authorization');
 
@@ -34,8 +34,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/index', indexRouter);
 //app.use('/', loginRouter);
-//app.use('/', booksRouter);
-app.use('/', userRouter);
+app.use('/', booksRouter);
+//app.use('/', userRouter);
 
 
 

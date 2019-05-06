@@ -1,12 +1,3 @@
-const allok = 200;
-const badrequest = 400;
-const unauthorized = 401;
-const notfound = 404;
-const conflict = 409;
-const preconditionfailed = 412;
-const updaterequired = 426;
-const servererror = 500;
-
 module.exports = {
     "ok": { "code": 200, "message": { "statusMessage": "OK" } },
     

@@ -2,8 +2,8 @@ const express = require('express');
 //const require = require('../baseModules/baseMod.js')
 const router = express.Router();
 const jsonfile = require('jsonfile');
-const validate = require('../baseModeles/validation.js')
-const base = require('../baseModeles/baseMod');
+const validate = require('../baseModeles/validation')
+const model = require('../baseModeles/baseMod');
 const filepath = './data/users.json';
 const loginedUsers = './data/loginedUsers.json';
 const crypto = require('crypto');
@@ -69,27 +69,28 @@ router.post('/registration', (req, res) => {
             return res.status(badRequest).send('Username is already existed');
         }
 */
-        base.readAll(filepath)
+        model.readAll(filepath)
         .then(data => { 
-            if(data[req.body.username]){
-                return res.status(badRequest).send('Username is already existed');
-            }
-            data[req.body.username] = {
-                username: req.body.username,
-                password: toCode(req.body.password,keyword),
-                // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
-                email: req.body.email
-                };
-                return data;
+             res.send(data)
+            // if(data[req.body.username]){
+            //     return res.status(badRequest).send('Username is already existed');
+            // }
+            // data[req.body.username] = {
+            //     username: req.body.username,
+            //     password: toCode(req.body.password,keyword),
+            //     // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
+            //     email: req.body.email
+            //     };
+            //     return data;
         })
-        .then(changedData=>{
-            addItem(filepath,req.body.username,data[req.body.username])
-            return 'OK';
-        })
-        .then(resp => {
-            return res.send(resp);
-        })
-        .catch(err=>{return res.send(err)})
+        // .then(changedData=>{
+        //     addItem(filepath,req.body.username,data[req.body.username])
+        //     return 'OK';
+        // })
+        // .then(resp => {
+        //     return res.send('resp');
+        // })
+        .catch(err=>{ res.send('err')});
 
 
         // obj[req.body.username] = {

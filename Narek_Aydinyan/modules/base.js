@@ -17,30 +17,22 @@ class baseObj{
     }
 
     deleteItem(filePath, key) {
-        this.readAll(filePath).
+        jsonfile.readFile(filePath).
         then((data) => {
-            if (data[key]) {
-                delete(data[key]);
-                return jsonfile.writeFile(filePath, data, { spaces: 2, EOL: '\r\n' })
-            }
-        }).
-        catch((err) => {
-            return ;
+            delete(data[key]);
+            jsonfile.writeFile(filePath, x, { spaces: 2, EOL: '\r\n' });
         });
     }
 
     readItem(filePath, key) {
-        this.readAll(filePath).
+        return jsonfile.readFile(filePath).
         then((data) => {
-            if (data[key]) {
+            if (data && data[key] !== undefined) {
                 return data[key];
             }
             else {
                 return null;
             }
-        }).
-        catch((err) => {
-            return ;
         });
     }
 }

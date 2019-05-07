@@ -5,19 +5,11 @@ const jsonfile = require('jsonfile');
 const router = express.Router();
 const crypto = require('crypto');
 const Key = require('../data/.key.js');
+const statusCodes = require('../data/constants.js');
 
 const userInfoPath = './data/users.json';
 const logPassPath = './data/logPassId.json';
 const tokenIdPath = './data/tokenId.json';
-
-const allok = 200;
-const badrequest = 400;
-const unauthorized = 401;
-const notfound = 404;
-const conflict = 409;
-const preconditionfailed = 412;
-const updaterequired = 426;
-const servererror = 500;
 
 const sha512 = function(str, key) {
     const hash = crypto.createHmac('sha512', Buffer.from(key));
@@ -45,35 +37,36 @@ const getBearerToken = function(userId) {
 
 const ToJsonString = function(str) {
     try {
-        const jsObj = JSON.parse(str);
-
-        return jsObj;
+        return JSON.parse(str);
     } catch (e) {
-        return undefined;
+        return ;
     }
 };
 
 const validateToken = function(userToken) {
     if (userToken === undefined) {
-        return res.status(unauthorized).json({ statusMessage: 'Unauthorized' }); 
+        return res.status(statusCodes.unauthorized.code).json(statusCodes.unauthorized.message); 
+    }
+    if ((!userToken.match('Bearer')) || userToken.match('Bearer').index !== 0) {
+        return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
     }
     const decodeStr = (Buffer.from(userToken.substring(7), 'base64').toString('ascii'));
     const tokenObj = ToJsonString(decodeStr);
-
+    
     if (tokenObj === undefined) {
-        return { statusCode: unauthorized, statusMessage: { statusMessage: 'Unauthorized' } };
+        return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
     }
     const hash = tokenObj.sha512;
     const infoHash = sha512(JSON.stringify(tokenObj.info), Key.token);
     const date = new Date();
 
     if (hash !== infoHash || tokenObj.info.iss !== 'accountRouter') {
-        return { statusCode: unauthorized, statusMessage: { statusMessage: 'Unauthorized' } };
+        return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
     }
     if (tokenObj.info.expiresOn < date.getTime()) {
-        return { statusCode: updaterequired, statusMessage: { statusMessage: 'Token update required' } };
+        return { statusCode: statusCodes.updateRequired.code, statusMessage: statusCodes.updateRequired.message };
     }
-    return { statusCode: allok, userId: tokenObj.info.userId };
+    return { statusCode: statusCodes.ok.code, userId: tokenObj.info.userId };
 };
 
 const validateLogin = function(login) {
@@ -153,52 +146,52 @@ const isSignIn = function(id, data){
 
 const validateRegistrReq = function(req) {
     if (Object.keys(req.body).length === 0) {
-        return { statusCode: badrequest, statusMessage: { statusMessage: 'Body is Empty' } };
+        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.body };
     }
     if (!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
-        return { statusCode: badrequest, statusMessage: { statusMessage: 'Enter valid login' } };
+        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.login };
     }
     if (!validatePassword(req.body.password)) {
-        return { statusCode: badrequest, statusMessage: { statusMessage: 'Enter valid password' } };
+        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.password };
     }
     if (!validateName(req.body.firstName)) {
-        return { statusCode: badrequest, statusMessage: { statusMessage: 'Enter valid firstName' } };
+        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.firstName };
     }
     if (!validateName(req.body.lastName)) {
-        return { statusCode: badrequest, statusMessage: { statusMessage: 'Enter valid lastName' } };
+        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.lastName };
     }
     if (!validateEmail(req.body.email)) {
-        return { statusCode: badrequest, statusMessage: { statusMessage: 'Enter valid email' } };
+        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.email };
     }
-    return { statusCode: allok };
+    return { statusCode: statusCodes.ok.code };
 };
 
 router.post('/register', function(req, res) {
-    const Status = validateRegistrReq(req);
+    const status = validateRegistrReq(req);
 
-    if (Status.statusCode !== allok) {
-        return res.status(Status.statusCode).json(Status.statusMessage);
+    if (status.statusCode !== statusCodes.ok.code) {
+        return res.status(status.statusCode).json(status.statusMessage);
     }
     jsonfile.readFile(userInfoPath, function(err, userInfoDb) {
         if (err) {
-            return res.status(servererror).json({ statusMessage: 'Server error' });
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
         }
         if (!existingEmail(req.body.email, userInfoDb)) {
-            return res.status(conflict).json({ statusMessage: 'Email already busy' });
+            return res.status(statusCodes.conflict.code).json(statusCodes.conflict.email);
         }
         jsonfile.readFile(logPassPath, function(err, logPassDb) {
             if (err) {
-                return res.status(servererror).json({ statusMessage: 'Server error' });
+                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
             }
             if (!existingLogin(req.body.login, logPassDb)) {
-                return res.status(conflict).json({ statusMessage: 'Login already busy' });
+                return res.status(statusCodes.conflict.code).json(statusCodes.conflict.login);
             }
             const id = uniqid();
 
             userInfoDb[ id ] = getUserInfoObj(req.body, id);
             jsonfile.writeFile(userInfoPath, userInfoDb, { spaces: 2, EOL: '\r\n' }, function(err) {
                 if (err) {
-                    return res.status(servererror).json({ statusMessage: 'Server error' });
+                    return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
                 }   
                 const logPass = {};
 
@@ -207,9 +200,9 @@ router.post('/register', function(req, res) {
                 logPassDb[ req.body.login ] = logPass;
                 jsonfile.writeFile(logPassPath, logPassDb, { spaces: 2, EOL: '\r\n' }, function(err) {
                     if (err) {
-                        return res.status(servererror).json({ statusMessage: 'Server error' });
+                        return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
                     }
-                    return res.status(allok).json({ statusMessage: 'OK' });
+                    return res.status(statusCodes.ok.code).json(statusCodes.ok.message);
                 });
             });
         });
@@ -218,44 +211,40 @@ router.post('/register', function(req, res) {
 
 router.post('/login', function (req, res) {
     if (Object.keys(req.body).length === 0) {
-        return res.status(badrequest).json({ statusMessage: 'Body is empty' });
+        return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest.body);
     }
     jsonfile.readFile(logPassPath, function(err, logPassDb) {
         if (err) {
-            return res.status(servererror).json({ statusMessage: 'Server error' });
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
         }
         if (!logPassDb.hasOwnProperty(req.body.login) || logPassDb[ req.body.login ].password !== (sha512(req.body.password, Key.pass))) {
-            return res.status(badrequest).json({ statusMessage: 'Enter valid login and password' });
+            return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest.logPass);
         }
         const id = logPassDb[ req.body.login ].userId;
         const token = getBearerToken(id);
+        const refreshT = crypto.randomBytes(15).toString('hex');
 
         jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
             if (err) {
-                return res.status(servererror).json({ statusMessage: 'Server error' });
+                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
             }
-            jsonfile.writeFile(logPassPath, logPassDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-                if (err) {
-                    return res.status(servererror).json({ statusMessage: 'Server error' });
-                }
-                const signInStatus = isSignIn(id, tokenIdDb);
-    
-                if (signInStatus) {
-                    const tokObj = {};
-                    tokObj.userId = id;
-                    tokenIdDb[ token ] = tokObj;
-                }
+            const signInStatus = isSignIn(id, tokenIdDb);
+        
+            if (signInStatus) {
+                const tokObj = {};
+                tokObj[ 'userId' ] = id;
+                tokObj[ 'refreshToken' ] = refreshT;
+                tokenIdDb[ token ] = tokObj;
                 jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
                     if (err) {
-                        return res.status(servererror).json({ statusMessage: 'Server error' });
+                        return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
                     }
-                    if (signInStatus) {
-                        res.setHeader('bearerToken', token);
-                        return res.status(allok).json({ 'statusMessage': 'OK' });
-                    }
-                    return res.status(conflict).json({ 'statusMessage': 'You are already logged in' });
+                    return res.status(statusCodes.ok.code).json({ BearerToken: token, refreshToken: refreshT });
                 });
-            });
+            }
+            else {
+                return res.status(statusCodes.conflict.code).json(statusCodes.conflict.allreadyLogin);
+            }
         });
     });
 });
@@ -263,20 +252,20 @@ router.post('/login', function (req, res) {
 router.get('/logout', function(req, res) {
     const tokenValid = validateToken(req.headers.authorization);
 
-    if (tokenValid.statusCode !== allok) {
+    if (tokenValid.statusCode !== statusCodes.ok.code) {
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
     jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
         if (err) {
-            return res.status(servererror).json({ statusMessage: 'Server error' });
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
         }
         delete (tokenIdDb[ token.substring(7) ]);
     
         jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
             if (err) {
-                return res.status(servererror).json({ statusMessage: 'Server error' });
+                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
             }
-            return res.status(allok).json({ statusMessage: 'OK' });
+            return res.status(statusCodes.ok.code).json(statusCodes.ok.message);
         });
     });
 });
@@ -284,12 +273,12 @@ router.get('/logout', function(req, res) {
 router.get('/userinfo', function(req, res) {
     const tokenValid = validateToken(req.headers.authorization);
 
-    if (tokenValid.statusCode !== allok) {
+    if (tokenValid.statusCode !== statusCodes.ok.code) {
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
     jsonfile.readFile(userInfoPath, function(err, userInfoDb) {
         if (err) {
-            return res.status(servererror).json({ statusMessage: 'Server error' });
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
         }
         let id = req.query.userId;
 
@@ -299,80 +288,46 @@ router.get('/userinfo', function(req, res) {
         const info = userInfoDb[ id ];
         
         if (!info) {
-            return res.status(notfound).json({ statusMessage: 'User not found' });
+            return res.status(statusCodes.notFound.code).json(statusCodes.notFound.message);
         }
-        jsonfile.writeFile(userInfoPath, userInfoDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-            if (err) {
-                return res.status(servererror).json({ statusMessage: 'Server error' });
-            }
-            return res.status(allok).json(info);
-        });
-    });
-});
-
-router.get('/basictoken', function(req, res) {
-    const tokenValid = validateToken(req.headers.authorization);
-
-    if (tokenValid.statusCode !== allok && tokenValid.statusCode !== updaterequired) {
-        console.log("if1");
-        return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
-    }
-    if (tokenValid.statusCode === allok) {
-        console.log("if2");
-        return res.status(tokenValid.statusCode).json({ statusMessage: 'Your token doesnt need to be refreshed' });
-    }
-    const basicToken = crypto.randomBytes(15).toString('hex');
-
-    jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
-        if (err) {
-            return res.status(servererror).json({ statusMessage: 'Server error' });
-        }
-        let tokenObj = tokenIdDb[ req.headers.authorization.substring(7) ];
-        tokenObj[ 'basicToken' ] = basicToken;
-        tokenIdDb[ req.headers.authorization.substring(7) ] = tokenObj;
-        jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-            if (err) {
-                return res.status(servererror).json({ statusMessage: 'Server error' });
-            }
-            res.setHeader('basictoken', basicToken);
-            return res.status(allok).json({ statusMessage: 'OK' });
-        });
+        return res.status(statusCodes.ok.code).json(info);
     });
 });
 
 router.get('/refreshtoken', function(req, res) {
     const tokenValid = validateToken(req.headers.authorization);
-    const basicToken = req.headers.basic;
+    const basicToken = req.headers.refreshtoken;
 
-    if (tokenValid.statusCode !== allok && tokenValid.statusCode !== updaterequired) {
+    if (tokenValid.statusCode !== statusCodes.ok.code && tokenValid.statusCode !== statusCodes.updateRequired.code) {
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
-    if (tokenValid.statusCode === allok) {
-        return res.status(tokenValid.statusCode).json({ statusMessage: 'Your token doesnt need to be refreshed' });
+    if (tokenValid.statusCode === statusCodes.ok.code) {
+        return res.status(statusCodes.conflict.code).json(statusCodes.conflict.token);
     }
     if (basicToken === undefined) {
-        return res.status(preconditionfailed).json({ statusMessage: 'Basic token is missing' });
+        return res.status(statusCodes.preconditionFailed.code).json(statusCodes.preconditionFailed.message);
     }
     jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
         if (err) {
-            return res.status(servererror).json({ statusMessage: 'Server error' });
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
         }
         let tokenObj = tokenIdDb[ req.headers.authorization.substring(7) ];
-        if (tokenObj[ 'basicToken' ] !== basicToken) {
-            return res.status(unauthorized).json({ statusMessage: 'Unauthorized' });
+        if ((!tokenObj) || tokenObj[ 'refreshToken' ] !== basicToken) {
+            return res.status(statusCodes.unauthorized.code).json(statusCodes.unauthorized.message);
         }
         const bearerToken = getBearerToken(tokenObj.userId);
+        const newRefreshToken = crypto.randomBytes(15).toString('hex');
         const newTokenObj = {};
         
-        newTokenObj['userId'] = tokenObj.userId;
+        newTokenObj[ 'userId' ] = tokenObj.userId;
+        newTokenObj[ 'refreshToken' ] = newRefreshToken;
         delete(tokenIdDb[ req.headers.authorization.substring(7) ]);
         tokenIdDb[ bearerToken ] = newTokenObj;
         jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
             if (err) {
-                return res.status(servererror).json({ statusMessage: 'Server error' });
+                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
             }
-            res.setHeader('refreshtoken', bearerToken);
-            return res.status(allok).json({ statusMessage: 'OK' });
+            return res.status(statusCodes.ok.code).json({ BearerToken: bearerToken });
         });
     });
 });

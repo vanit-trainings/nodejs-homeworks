@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function showPassword(){
+var passEl=document.getElementByID("pass_id");
+if(document.getElementByID("chekId").cheked==true){
+passEl.type=""text";
+}else{
+passEl.type="password";
+ }
+
+
+}
+</script>
+</head>
+<body>
+<form method="GET">
+Login:<br>
+<input type="TEXT"><br>
+Password:<br>
+<input type="password" id="pass_id"placeholder="Input password"><br>
+
+Show Password<br>
+<input type="checkbox" Onclick="showPassword()" id="chekId">
+
+</form>
+
+
+</html>

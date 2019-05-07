@@ -1,6 +1,5 @@
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
-
 function validateUsers(user) {
     const userSchema = Joi.object({
         _id: Joi.objectId(),
@@ -11,4 +10,4 @@ function validateUsers(user) {
 
     return Joi.validate(user, userSchema);
 }
-module.exports = validateUsers;
+exports.validateUsers = validateUsers;

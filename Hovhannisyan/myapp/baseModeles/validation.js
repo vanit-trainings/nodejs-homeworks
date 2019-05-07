@@ -18,4 +18,4 @@ validateEmail(email) {
     return mail.test(email);
 }
 };
-module.export =new  validation();
+module.export = new  validation();

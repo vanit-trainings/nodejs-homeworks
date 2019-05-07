@@ -1,12 +1,11 @@
 const express = require('express');
 const uniqid = require('uniqid');
-const jsonfile = require('jsonfile');
 
 const router = express.Router();
 const crypto = require('crypto');
 const Key = require('../data/.key.js');
 const statusCodes = require('../modules/constants.js');
-const baseModel = new (require('../modules/base'));
+const baseModel = new (require('../modules/base'))();
 
 const userInfoPath = './data/users.json';
 const logPassPath = './data/logPassId.json';
@@ -46,7 +45,7 @@ const ToJsonString = function(str) {
 
 const validateToken = function(userToken) {
     if (userToken === undefined) {
-        return res.status(statusCodes.unauthorized.code).json(statusCodes.unauthorized.message); 
+        return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message }; 
     }
     if ((!userToken.match('Bearer')) || userToken.match('Bearer').index !== 0) {
         return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
@@ -121,7 +120,7 @@ const validateName = function(name) {
 
 const getUserInfoObj = function(info, id) {
     const data = {};
-    console.log('dataskizb')
+
     data.firstName = info.firstName;
     data.lastName = info.lastName;
     data.email = info.email;
@@ -129,12 +128,12 @@ const getUserInfoObj = function(info, id) {
     data.gender = info.gender;
     data.birthDate = info.birthDate;
     data.userId = id;
-    console.log('dataVerj')
     return data;
 };
 
-const isSignIn = function(id, data){
+const isSignIn = function(id, data) {
     let count = 0;
+
     for (const key in data) {
         if (data[ key ].userId === id) {
             count++;
@@ -144,7 +143,7 @@ const isSignIn = function(id, data){
         return false;
     }
     return true;
-}
+};
 
 const validateRegistrReq = function(req) {
     if (Object.keys(req.body).length === 0) {
@@ -168,116 +167,101 @@ const validateRegistrReq = function(req) {
     return { statusCode: statusCodes.ok.code };
 };
 
-router.post('/register', function(req, res) {
+router.post('/register', (req, res) => {
     const status = validateRegistrReq(req);
 
     if (status.statusCode !== statusCodes.ok.code) {
         return res.status(status.statusCode).json(status.statusMessage);
     }
  
-    baseModel.readAll(userInfoPath).
-    then((userInfoDb) => {
-        if (!existingEmail(req.body.email, userInfoDb)) {
-            throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
-        }
-        else { 
-            return baseModel.readAll(logPassPath)
-        }
-    }).
-    then((logPassDb) => {
-        if (!existingLogin(req.body['login'], logPassDb)) {
-            throw { statusCode: 409, statusMessage: statusCodes.conflict.login };
-        }
-        else {
-            const id = uniqid();
-            const userInfo = getUserInfoObj(req.body, id);
+    baseModel.readAll(userInfoPath)
+        .then((userInfoDb) => {
+            if (!existingEmail(req.body.email, userInfoDb)) {
+                throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
+            } else { 
+                return baseModel.readAll(logPassPath);
+            }
+        })
+        .then((logPassDb) => {
+            if (!existingLogin(req.body.login, logPassDb)) {
+                throw { statusCode: 409, statusMessage: statusCodes.conflict.login };
+            } else {
+                const id = uniqid();
+                const userInfo = getUserInfoObj(req.body, id);
         
-            baseModel.addItem(userInfoPath, userInfo.userId, userInfo)
-            return userInfo.userId;
-        }
-    }).
-    then((id) => {
-        const logPass = {};
+                baseModel.addItem(userInfoPath, userInfo.userId, userInfo);
+                return userInfo.userId;
+            }
+        })
+        .then((id) => {
+            const logPass = {};
 
-        logPass.password = (sha512(req.body.password, Key.pass));
-        logPass.userId = id;
-        baseModel.addItem(logPassPath, req.body[ 'login' ], logPass)
-    }).
-    then(() => {
-        return res.status(statusCodes.ok.code).json(statusCodes.ok.message);
-    }).
-    catch((err) => {
-        if (err.statusCode === statusCodes.conflict.code) {
-            res.status(err.statusCode).json(err.statusMessage);
-        }
-        else {
-            res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        }
-    });
+            logPass.password = (sha512(req.body.password, Key.pass));
+            logPass.userId = id;
+            baseModel.addItem(logPassPath, req.body.login, logPass);
+        })
+        .then(() => res.status(statusCodes.ok.code).json(statusCodes.ok.message))
+        .catch((err) => {
+            if (err.statusCode === statusCodes.conflict.code) {
+                return res.status(err.statusCode).json(err.statusMessage);
+            }
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+        });
 });
 
-router.post('/login', function (req, res) {
+router.post('/login', (req, res) => {
     if (Object.keys(req.body).length === 0) {
         return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest.body);
     }
  
-    baseModel.readAll(logPassPath).
-    then((logPassDb) => {
-        if (!logPassDb.hasOwnProperty(req.body.login) || logPassDb[ req.body.login ].password !== (sha512(req.body.password, Key.pass))) {
-            throw { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.logPass }
-        }
-        else {
-            const id = logPassDb[ req.body.login ].userId;
-            const tokenIdDb =  baseModel.readAll(tokenIdPath);
-            return { id: id, tokenIdDb: tokenIdDb };
-        }
-    }).
-    then((info) => {
-        const signInStatus = isSignIn(info.id, info.tokenIdDb);
-        if (!signInStatus) {
-            throw { statusCode: statusCodes.conflict.code, statusMessage: statusCodes.conflict.allreadyLogin };
-        }
-        else {
-            const token = getBearerToken(info.id);
-            const refreshT = crypto.randomBytes(15).toString('hex');
-            const tokObj = {};
+    baseModel.readAll(logPassPath)
+        .then((logPassDb) => {
+            if (!logPassDb.hasOwnProperty(req.body.login) || logPassDb[ req.body.login ].password !== (sha512(req.body.password, Key.pass))) {
+                throw { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.logPass };
+            } else {
+                const id = logPassDb[ req.body.login ].userId;
+                const tokenIdDb = baseModel.readAll(tokenIdPath);
+            
+                return { id: id, tokenIdDb: tokenIdDb };
+            }
+        })
+        .then((info) => {
+            const signInStatus = isSignIn(info.id, info.tokenIdDb);
+            
+            if (!signInStatus) {
+                throw { statusCode: statusCodes.conflict.code, statusMessage: statusCodes.conflict.allreadyLogin };
+            } else {
+                const token = getBearerToken(info.id);
+                const refreshT = crypto.randomBytes(15).toString('hex');
+                const tokObj = {};
 
-            tokObj[ 'userId' ] = info.id;
-            tokObj[ 'refreshToken' ] = refreshT;
-            baseModel.addItem(tokenIdPath, token, tokObj)
-            return { BearerToken: token, RefreshToken: refreshT };
-        }
-    }).
-    then((messageInfo) => {
-        res.status(statusCodes.ok.code).json(messageInfo);
-    }).
-    catch((err) => {
-        console.log(err);
-        if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
-            res.status(err.statusCode).json(err.statusMessage);
-        }
-        else {
-            res.status(statusCodes.serverError.code).json(statusCodes.serverError.message); 
-        }
-    });
+                tokObj.userId = info.id;
+                tokObj.refreshToken = refreshT;
+                baseModel.addItem(tokenIdPath, token, tokObj);
+                return { BearerToken: token, RefreshToken: refreshT };
+            }
+        })
+        .then((messageInfo) => res.status(statusCodes.ok.code).json(messageInfo))
+        .catch((err) => {
+            if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
+                return res.status(err.statusCode).json(err.statusMessage);
+            }
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message); 
+        });
 });
 
-router.get('/logout', function(req, res) {
+router.get('/logout', (req, res) => {
     const tokenValid = validateToken(req.headers.authorization);
     
     if (tokenValid.statusCode !== statusCodes.ok.code) {
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
-    baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7)).
-    then(() => {
-        res.status(statusCodes.ok.code).json(statusCodes.ok.message);
-    }).
-    catch((err) => {
-        res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-    });
+    baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7))
+        .then(() => res.status(statusCodes.ok.code).json(statusCodes.ok.message))
+        .catch((err) => res.status(statusCodes.serverError.code).json(statusCodes.serverError.message));
 });
 
-router.get('/userinfo', function(req, res) {
+router.get('/userinfo', (req, res) => {
     const tokenValid = validateToken(req.headers.authorization);
 
     if (tokenValid.statusCode !== statusCodes.ok.code) {
@@ -288,19 +272,17 @@ router.get('/userinfo', function(req, res) {
     if (!id) {
         id = tokenValid.userId;
     }
-    baseModel.readItem(userInfoPath, id).
-    then((info) => {
-        if (info === null) {
-            return res.status(statusCodes.notFound.code).json(statusCodes.notFound.message);
-        }
-        res.status(statusCodes.ok.code).json(info);
-    }).
-    catch ((err) => {
-        res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-    });
+    baseModel.readItem(userInfoPath, id)
+        .then((info) => {
+            if (info === null) {
+                return res.status(statusCodes.notFound.code).json(statusCodes.notFound.message);
+            }
+            return res.status(statusCodes.ok.code).json(info);
+        })
+        .catch((err) => res.status(statusCodes.serverError.code).json(statusCodes.serverError.message));
 });
 
-router.get('/refreshtoken', function(req, res) {
+router.get('/refreshtoken', (req, res) => {
     const tokenValid = validateToken(req.headers.authorization);
     const basicToken = req.headers.refreshtoken;
 
@@ -314,35 +296,32 @@ router.get('/refreshtoken', function(req, res) {
         return res.status(statusCodes.preconditionFailed.code).json(statusCodes.preconditionFailed.message);
     }
 
-    baseModel.readItem(tokenIdPath, req.headers.authorization.substring(7)).
-    then((tokenObj) => {
-        if (!tokenObj || tokenObj.refreshToken !== basicToken) {
-            throw { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
-        }
-        else {
-            const userId = tokenObj.userId;
-            const refreshTok = tokenObj.refreshToken;
-            baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7)).
-            then(() => {
-                const bearerToken = getBearerToken(userId);
-                const newRefTok = crypto.randomBytes(15).toString('hex');
-                const newTokenObj = {};
+    baseModel.readItem(tokenIdPath, req.headers.authorization.substring(7))
+        .then((tokenObj) => {
+            if (!tokenObj || tokenObj.refreshToken !== basicToken) {
+                throw { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
+            } else {
+                const id = tokenObj.userId;
+                
+                baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7))
+                .then(() => {
+                    const bearerToken = getBearerToken(id);
+                    const newRefTok = crypto.randomBytes(15).toString('hex');
+                    const newTokenObj = {};
         
-                newTokenObj[ 'userId' ] = userId;
-                newTokenObj[ 'refreshToken' ] = newRefTok;
-                baseModel.addItem(tokenIdPath, bearerToken, newTokenObj);
-                return res.status(statusCodes.ok.code).json({ BearerToken: bearerToken, RefreshToken: newRefTok });
-            })
-        }
-    }).
-    catch((err) => {
-        if (err.statusCode) {
-            res.status(err.statusCode).json(err.statusMessage);
-        }
-        else {
-            res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        }
-    });
+                    newTokenObj.userId = id;
+                    newTokenObj.refreshToken = newRefTok;
+                    baseModel.addItem(tokenIdPath, bearerToken, newTokenObj);
+                    return res.status(statusCodes.ok.code).json({ BearerToken: bearerToken, RefreshToken: newRefTok });
+                });
+            }
+        })
+        .catch((err) => {
+            if (err.statusCode) {
+                return res.status(err.statusCode).json(err.statusMessage);
+            }
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+        });
 });
 
 module.exports = router;

@@ -28,7 +28,7 @@ readItem(filepath, id) {
         .catch(err => { console.log(err) });
 }
 readAll(filepath) {
-    jsonfile.readFile(filepath)
+    return jsonfile.readFile(filepath)
         .then(data => { return data })
         .catch(err => { console.log(err) });
 }
@@ -42,4 +42,4 @@ updateItem(filepath, key, value) {
         .catch('serverError')
 }
 };
-
+module.export =new model();

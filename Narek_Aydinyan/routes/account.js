@@ -6,6 +6,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const Key = require('../data/.key.js');
 const statusCodes = require('../data/constants.js');
+const baseModel = new (require('../modules/base'));
 
 const userInfoPath = './data/users.json';
 const logPassPath = './data/logPassId.json';
@@ -27,7 +28,7 @@ const getBearerToken = function(userId) {
 
     tokenInfo.userId = userId;
     tokenInfo.iss = 'accountRouter';
-    tokenInfo.expiresOn = Number(date.getTime()) + (2 * 60 * 60 * 1000);
+    tokenInfo.expiresOn = Number(date.getTime()) /*+ (2 * 60 * 60 * 1000)*/;
     BearerToken.info = tokenInfo;
     const tokenStr = sha512(JSON.stringify(tokenInfo), Key.token);
 
@@ -120,7 +121,7 @@ const validateName = function(name) {
 
 const getUserInfoObj = function(info, id) {
     const data = {};
-
+    console.log('dataskizb')
     data.firstName = info.firstName;
     data.lastName = info.lastName;
     data.email = info.email;
@@ -128,6 +129,7 @@ const getUserInfoObj = function(info, id) {
     data.gender = info.gender;
     data.birthDate = info.birthDate;
     data.userId = id;
+    console.log('dataVerj')
     return data;
 };
 
@@ -172,40 +174,45 @@ router.post('/register', function(req, res) {
     if (status.statusCode !== statusCodes.ok.code) {
         return res.status(status.statusCode).json(status.statusMessage);
     }
-    jsonfile.readFile(userInfoPath, function(err, userInfoDb) {
-        if (err) {
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        }
+ 
+    baseModel.readAll(userInfoPath).
+    then((userInfoDb) => {
         if (!existingEmail(req.body.email, userInfoDb)) {
-            return res.status(statusCodes.conflict.code).json(statusCodes.conflict.email);
+            throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
         }
-        jsonfile.readFile(logPassPath, function(err, logPassDb) {
-            if (err) {
-                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-            }
-            if (!existingLogin(req.body.login, logPassDb)) {
-                return res.status(statusCodes.conflict.code).json(statusCodes.conflict.login);
-            }
+        else { 
+            return baseModel.readAll(logPassPath)
+        }
+    }).
+    then((logPassDb) => {
+        if (!existingLogin(req.body['login'], logPassDb)) {
+            throw { statusCode: 409, statusMessage: statusCodes.conflict.login };
+        }
+        else {
             const id = uniqid();
+            const userInfo = getUserInfoObj(req.body, id);
+        
+            baseModel.addItem(userInfoPath, userInfo.userId, userInfo)
+            return userInfo.userId;
+        }
+    }).
+    then((id) => {
+        const logPass = {};
 
-            userInfoDb[ id ] = getUserInfoObj(req.body, id);
-            jsonfile.writeFile(userInfoPath, userInfoDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-                if (err) {
-                    return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-                }   
-                const logPass = {};
-
-                logPass.password = (sha512(req.body.password, Key.pass));
-                logPass.userId = id;
-                logPassDb[ req.body.login ] = logPass;
-                jsonfile.writeFile(logPassPath, logPassDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-                    if (err) {
-                        return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-                    }
-                    return res.status(statusCodes.ok.code).json(statusCodes.ok.message);
-                });
-            });
-        });
+        logPass.password = (sha512(req.body.password, Key.pass));
+        logPass.userId = id;
+        baseModel.addItem(logPassPath, req.body[ 'login' ], logPass)
+    }).
+    then(() => {
+        return res.status(statusCodes.ok.code).json(statusCodes.ok.message);
+    }).
+    catch((err) => {
+        if (err.statusCode === statusCodes.conflict.code) {
+            res.status(err.statusCode).json(err.statusMessage);
+        }
+        else {
+            res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+        }
     });
 });
 
@@ -213,60 +220,60 @@ router.post('/login', function (req, res) {
     if (Object.keys(req.body).length === 0) {
         return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest.body);
     }
-    jsonfile.readFile(logPassPath, function(err, logPassDb) {
-        if (err) {
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        }
+ 
+    baseModel.readAll(logPassPath).
+    then((logPassDb) => {
         if (!logPassDb.hasOwnProperty(req.body.login) || logPassDb[ req.body.login ].password !== (sha512(req.body.password, Key.pass))) {
-            return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest.logPass);
+            throw { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.logPass }
         }
-        const id = logPassDb[ req.body.login ].userId;
-        const token = getBearerToken(id);
-        const refreshT = crypto.randomBytes(15).toString('hex');
+        else {
+            const id = logPassDb[ req.body.login ].userId;
+            const tokenIdDb =  baseModel.readAll(tokenIdPath);
+            return { id: id, tokenIdDb: tokenIdDb };
+        }
+    }).
+    then((info) => {
+        const signInStatus = isSignIn(info.id, info.tokenIdDb);
+        if (!signInStatus) {
+            throw { statusCode: statusCodes.conflict.code, statusMessage: statusCodes.conflict.allreadyLogin };
+        }
+        else {
+            const token = getBearerToken(info.id);
+            const refreshT = crypto.randomBytes(15).toString('hex');
+            const tokObj = {};
 
-        jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
-            if (err) {
-                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-            }
-            const signInStatus = isSignIn(id, tokenIdDb);
-        
-            if (signInStatus) {
-                const tokObj = {};
-                tokObj[ 'userId' ] = id;
-                tokObj[ 'refreshToken' ] = refreshT;
-                tokenIdDb[ token ] = tokObj;
-                jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-                    if (err) {
-                        return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-                    }
-                    return res.status(statusCodes.ok.code).json({ BearerToken: token, refreshToken: refreshT });
-                });
-            }
-            else {
-                return res.status(statusCodes.conflict.code).json(statusCodes.conflict.allreadyLogin);
-            }
-        });
+            tokObj[ 'userId' ] = info.id;
+            tokObj[ 'refreshToken' ] = refreshT;
+            baseModel.addItem(tokenIdPath, token, tokObj)
+            return { BearerToken: token, RefreshToken: refreshT };
+        }
+    }).
+    then((messageInfo) => {
+        res.status(statusCodes.ok.code).json(messageInfo);
+    }).
+    catch((err) => {
+        console.log(err);
+        if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
+            res.status(err.statusCode).json(err.statusMessage);
+        }
+        else {
+            res.status(statusCodes.serverError.code).json(statusCodes.serverError.message); 
+        }
     });
 });
 
 router.get('/logout', function(req, res) {
     const tokenValid = validateToken(req.headers.authorization);
-
+    
     if (tokenValid.statusCode !== statusCodes.ok.code) {
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
-    jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
-        if (err) {
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        }
-        delete (tokenIdDb[ token.substring(7) ]);
-    
-        jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-            if (err) {
-                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-            }
-            return res.status(statusCodes.ok.code).json(statusCodes.ok.message);
-        });
+    baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7)).
+    then(() => {
+        res.status(statusCodes.ok.code).json(statusCodes.ok.message);
+    }).
+    catch((err) => {
+        res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
     });
 });
 
@@ -276,21 +283,20 @@ router.get('/userinfo', function(req, res) {
     if (tokenValid.statusCode !== statusCodes.ok.code) {
         return res.status(tokenValid.statusCode).json(tokenValid.statusMessage);
     }
-    jsonfile.readFile(userInfoPath, function(err, userInfoDb) {
-        if (err) {
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        }
-        let id = req.query.userId;
+    let id = req.query.userId;
 
-        if (!id) {
-            id = tokenValid.userId;
-        }
-        const info = userInfoDb[ id ];
-        
-        if (!info) {
+    if (!id) {
+        id = tokenValid.userId;
+    }
+    baseModel.readItem(userInfoPath, id).
+    then((info) => {
+        if (info === null) {
             return res.status(statusCodes.notFound.code).json(statusCodes.notFound.message);
         }
-        return res.status(statusCodes.ok.code).json(info);
+        res.status(statusCodes.ok.code).json(info);
+    }).
+    catch ((err) => {
+        res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
     });
 });
 
@@ -307,28 +313,46 @@ router.get('/refreshtoken', function(req, res) {
     if (basicToken === undefined) {
         return res.status(statusCodes.preconditionFailed.code).json(statusCodes.preconditionFailed.message);
     }
-    jsonfile.readFile(tokenIdPath, function(err, tokenIdDb) {
-        if (err) {
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+    console.log('0');
+
+    baseModel.readItem(tokenIdPath, req.headers.authorization.substring(7)).
+    then((tokenObj) => {
+        console.log('1');
+        if (!tokenObj || tokenObj.refreshToken !== basicToken) {
+            throw { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
         }
-        let tokenObj = tokenIdDb[ req.headers.authorization.substring(7) ];
-        if ((!tokenObj) || tokenObj[ 'refreshToken' ] !== basicToken) {
-            return res.status(statusCodes.unauthorized.code).json(statusCodes.unauthorized.message);
+        else {
+            const userId = tokenObj.userId;
+            const refreshTok = tokenObj.refreshToken;
+            baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7));
+            return { id: userId, refTok: refreshTok };
         }
-        const bearerToken = getBearerToken(tokenObj.userId);
+    }).
+    then((tokInfo) => {
+        console.log('2');
+
+        const bearerToken = getBearerToken(tokInfo.id);
         const newRefreshToken = crypto.randomBytes(15).toString('hex');
         const newTokenObj = {};
         
-        newTokenObj[ 'userId' ] = tokenObj.userId;
-        newTokenObj[ 'refreshToken' ] = newRefreshToken;
-        delete(tokenIdDb[ req.headers.authorization.substring(7) ]);
-        tokenIdDb[ bearerToken ] = newTokenObj;
-        jsonfile.writeFile(tokenIdPath, tokenIdDb, { spaces: 2, EOL: '\r\n' }, function(err) {
-            if (err) {
-                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-            }
-            return res.status(statusCodes.ok.code).json({ BearerToken: bearerToken });
-        });
+        newTokenObj[ 'userId' ] = tokInfo.id;
+        newTokenObj[ 'refreshToken' ] = tokInfo.refTok;
+        baseModel.addItem(tokenIdPath, bearerToken, newTokenObj);
+        return { BearerToken: bearerToken, RefreshToken: newRefreshToken };
+    }).
+    then((tokenMess) => {
+        console.log('3');
+
+        res.status(statusCodes.ok.code).json(tokenMess);
+    }).
+    catch((err) => {
+        console.log(err);
+        if (err.statusCode) {
+            res.status(err.statusCode).json(err.statusMessage);
+        }
+        else {
+            res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+        }
     });
 });
 

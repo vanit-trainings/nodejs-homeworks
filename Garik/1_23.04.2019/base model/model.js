@@ -1,18 +1,54 @@
 const jsonfile = require('jsonfile');
 
-const readAll = (path) => jsonfile.readFile(path);
-const additem = (path, key, value) => {
-    jsonfile.readFile(path)
-        .then((result) => {
-            result[ key ] = value;
-            jsonfile.writeFile(path, result);
-        }).catch((err) => err);
-};
+class baseObj {
+	readAll(path) {
+		return jsonfile.readFile(path);
+	}
 
-console.log(readAll('../data/books.json'));
-module.exports = readAll;
-// additem
-// deleteitem
-// readitem
-// readAll
-// updateItem
+	additem(path, key, value){
+		return this.readAll(path)
+			.then(result => {
+				result[ key ] = value;
+				return result;
+			})
+			.then(resultWrite => {
+				return jsonfile.writeFile(path, resultWrite, {spaces : 4, EOL : '\r\n'});
+			})
+			.catch(err => err);
+	}
+
+	deleteItem(path, id){
+		return this.readAll(path)
+			.then(result => {
+				if(!result[ id ]){
+					return 'Record Not Found : id - is not correct (no match found)';
+				}
+				delete result[ id ];
+				return jsonfile.writeFile(path, result, {spaces : 4, EOL : '\r\n'});
+			})
+			.catch(err => err);
+	}
+
+	readItem(path, id){
+		return this.readAll(path)
+			.then(result => {
+				return result[ id ] ? result[ id ] : 'Record Not Found : id - is not correct (no match found)';
+			})
+			.catch(err => err);
+	}
+
+	updateItem(path, id, obj){
+		return this.readAll(path)
+			.then(result => {
+				if(!result[ id ]){
+					return 'Record Not Found : id - is not correct (no match found)';
+				}
+				for(let i in obj){
+					result[ id ][ i ] = obj[ i ];
+				}
+				return jsonfile.writeFile(path, result, {spaces : 4, EOL : '\r\n'});
+			}).catch((err) => err);
+	}
+}
+
+module.exports = new baseObj();

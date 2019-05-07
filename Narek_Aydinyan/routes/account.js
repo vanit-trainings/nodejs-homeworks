@@ -5,7 +5,7 @@ const jsonfile = require('jsonfile');
 const router = express.Router();
 const crypto = require('crypto');
 const Key = require('../data/.key.js');
-const statusCodes = require('../data/constants.js');
+const statusCodes = require('../modules/constants.js');
 const baseModel = new (require('../modules/base'));
 
 const userInfoPath = './data/users.json';
@@ -28,7 +28,7 @@ const getBearerToken = function(userId) {
 
     tokenInfo.userId = userId;
     tokenInfo.iss = 'accountRouter';
-    tokenInfo.expiresOn = Number(date.getTime()) /*+ (2 * 60 * 60 * 1000)*/;
+    tokenInfo.expiresOn = Number(date.getTime()) + (2 * 60 * 60 * 1000);
     BearerToken.info = tokenInfo;
     const tokenStr = sha512(JSON.stringify(tokenInfo), Key.token);
 
@@ -313,40 +313,29 @@ router.get('/refreshtoken', function(req, res) {
     if (basicToken === undefined) {
         return res.status(statusCodes.preconditionFailed.code).json(statusCodes.preconditionFailed.message);
     }
-    console.log('0');
 
     baseModel.readItem(tokenIdPath, req.headers.authorization.substring(7)).
     then((tokenObj) => {
-        console.log('1');
         if (!tokenObj || tokenObj.refreshToken !== basicToken) {
             throw { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
         }
         else {
             const userId = tokenObj.userId;
             const refreshTok = tokenObj.refreshToken;
-            baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7));
-            return { id: userId, refTok: refreshTok };
+            baseModel.deleteItem(tokenIdPath, req.headers.authorization.substring(7)).
+            then(() => {
+                const bearerToken = getBearerToken(userId);
+                const newRefTok = crypto.randomBytes(15).toString('hex');
+                const newTokenObj = {};
+        
+                newTokenObj[ 'userId' ] = userId;
+                newTokenObj[ 'refreshToken' ] = newRefTok;
+                baseModel.addItem(tokenIdPath, bearerToken, newTokenObj);
+                return res.status(statusCodes.ok.code).json({ BearerToken: bearerToken, RefreshToken: newRefTok });
+            })
         }
     }).
-    then((tokInfo) => {
-        console.log('2');
-
-        const bearerToken = getBearerToken(tokInfo.id);
-        const newRefreshToken = crypto.randomBytes(15).toString('hex');
-        const newTokenObj = {};
-        
-        newTokenObj[ 'userId' ] = tokInfo.id;
-        newTokenObj[ 'refreshToken' ] = tokInfo.refTok;
-        baseModel.addItem(tokenIdPath, bearerToken, newTokenObj);
-        return { BearerToken: bearerToken, RefreshToken: newRefreshToken };
-    }).
-    then((tokenMess) => {
-        console.log('3');
-
-        res.status(statusCodes.ok.code).json(tokenMess);
-    }).
     catch((err) => {
-        console.log(err);
         if (err.statusCode) {
             res.status(err.statusCode).json(err.statusMessage);
         }

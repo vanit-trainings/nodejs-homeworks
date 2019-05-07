@@ -10,17 +10,14 @@ class baseObj{
         then((data) => {
         data[key] = value;
             return jsonfile.writeFile(filePath, data, { spaces: 2, EOL: '\r\n' })
-        }).
-        catch((err) => {
-            return ;
         });
     }
 
     deleteItem(filePath, key) {
-        jsonfile.readFile(filePath).
+        return jsonfile.readFile(filePath).
         then((data) => {
             delete(data[key]);
-            jsonfile.writeFile(filePath, x, { spaces: 2, EOL: '\r\n' });
+            return jsonfile.writeFile(filePath, data, { spaces: 2, EOL: '\r\n' });
         });
     }
 

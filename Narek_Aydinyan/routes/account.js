@@ -45,7 +45,7 @@ const ToJsonString = function(str) {
 
 const validateToken = function(userToken) {
     if (userToken === undefined) {
-        return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message }; 
+        return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
     }
     if ((!userToken.match('Bearer')) || userToken.match('Bearer').index !== 0) {
         return { statusCode: statusCodes.unauthorized.code, statusMessage: statusCodes.unauthorized.message };
@@ -178,7 +178,7 @@ router.post('/register', (req, res) => {
         .then((userInfoDb) => {
             if (!existingEmail(req.body.email, userInfoDb)) {
                 throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
-            } else { 
+            } else {
                 return baseModel.readAll(logPassPath);
             }
         })
@@ -246,7 +246,7 @@ router.post('/login', (req, res) => {
             if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
                 return res.status(err.statusCode).json(err.statusMessage);
             }
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message); 
+            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
         });
 });
 
@@ -308,7 +308,7 @@ router.get('/refreshtoken', (req, res) => {
                     const bearerToken = getBearerToken(id);
                     const newRefTok = crypto.randomBytes(15).toString('hex');
                     const newTokenObj = {};
-        
+                    
                     newTokenObj.userId = id;
                     newTokenObj.refreshToken = newRefTok;
                     baseModel.addItem(tokenIdPath, bearerToken, newTokenObj);

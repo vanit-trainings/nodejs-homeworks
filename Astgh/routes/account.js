@@ -266,4 +266,87 @@ router.post('/login', (req, res) => {
 	});
 });
 
+router.get('/logOut', (req, res) => {
+	const token = req.headers.authorization;
+	const tokenValidation = validateToken(token);
+	if (tokenValidation.statusCode !== statuses.ok.code) {
+		return res.status(tokenValidation.statusCode).json(tokenValidation.statusMessage);
+	}
+	jsonfile.readFile(tokenIdPath, (err, tokenId) => {
+		if (err) {
+			return res.status(statuses.serverError.code).json(statuses.serverError.message);
+		}
+		delete (tokenId[ token.substring(7) ]);
+		jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
+			if (err) {
+				return res.status(statuses.serverError.code).json(statuses.serverError.message);
+			}
+			return res.status(statuses.ok.code).json(statuses.ok.message);
+		});
+	});
+});
+
+router.get('/userinfo', (req, res) => {
+	const token = req.headers.authorization;
+	const tokenValidation = validateToken(token);
+	if (tokenValidation.statusCode !== statuses.ok.code) {
+	return res.status(tokenValidation.statusCode).json(tokenValidation.statusMessage);
+	}
+	
+	jsonfile.readFile(filePath, (err, info) => {
+		if (err) {
+			return res.status(statuses.serverError.code).json(statuses.serverError.statusMessage);
+		}
+	
+		const data = info[ id ];
+	
+		jsonfile.writeFile(filePath, info, { spaces: 2, EOL: '\r\n' }, (err) => {
+			if (err) {
+				return res.status(statuses.serverError.code).json(statuses.serverError.message);
+			}
+			if (!data) {
+				return res.status(statuses.notFound.code).json(statuses.notFound.message);
+			}
+			return res.status(statuses.ok.code).json(data);
+			});
+		});
+	});
+
+router.get('/updatedToken', (req, res) => {
+	const token = req.headers.authorization;
+	const tokenValidation = validateToken(token);
+	if (tokenValidation.statusCode === statuses.ok.code) {
+		return res.status(statuses.conflict.code).json(statuses.conflict.token);
+	}
+	if (tokenValidation.statusCode !== statuses.ok.code && tokenValidation.statusCode !== statuses.update.code) {
+		return res.status(tokenValidation.statusCode).json(tokenValidation.statusMessage);
+	}
+	const checkingToken = req.headers.checking;
+	if (checkingToken === undefined) {
+		return res.status(statuses.preconditionFailed.code).json(statuses.preconditionFailed.message);
+	}
+	jsonfile.readFile(tokenIdPath, (err, tokenId) => {
+		if (err) {
+			return res.status(statuses.serverError.code).json(statuses.serverError.message);
+		}
+		const tokenObj = tokenId[ (req.headers.authorization).substring(7) ];
+		if (tokenObj[ 'checkingToken' ] !== checkingToken) {
+			return res.status(statuses.unauthorized.code).json(statuses.unauthorized.message);
+		}
+		const uid = tokenObj[ 'userId' ];
+		const newCheckingToken = crypto.randomBytes(15).toString('hex');
+		const newTokenObj = {};
+		delete (tokenId[ req.headers.authorization.substring(7) ]);
+		newTokenObj.userId = uid;
+		newTokenObj.checkingToken = newCheckingToken;
+		tokenId[ token ] = newTokenObj;
+		jsonfile.writeFile(tokenIdPath, tokenId, { spaces: 2, EOL: '\r\n' }, (err) => {
+			if (err) {
+				return res.status(statuses.serverError.code).json(statuses.serverError.message);
+			}
+			return res.status(statuses.ok.code).json({token: newCheckingToken});
+		});
+	});
+});
+
 module.exports = router;

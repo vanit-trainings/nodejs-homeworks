@@ -21,11 +21,11 @@ class base {
 	}
 
 	deleteItem(path, id) {
-		jsonfile.readFile(path)
+		return jsonfile.readFile(path)
 			.then((infoObj) => {
 				if (infoObj[id]) {
 					delete (infoObj[id]);
-					jsonfile.writeFile(path, infoObj, { spaces: 2, EOL: '\r\n' });
+					return jsonfile.writeFile(path, infoObj, { spaces: 2, EOL: '\r\n' });
 				}
 			})
 			.catch((err) => { return });

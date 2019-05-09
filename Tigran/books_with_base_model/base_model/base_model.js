@@ -1,9 +1,5 @@
 const jsonfile = require('jsonfile');
-var allBooks = "./data/allBooks.json";
-
-// class baseModel  {
-
-// }
+const allBooks = "./data/allBooks.json";
 
 
 const readAll = (path) => {
@@ -41,7 +37,7 @@ const addItem = (item) => {//item (new book) should validate
 						send : 'succsess'
 					}
 				})
-				.catch(err => {// ete es catch@ chexni 51rd toxi catch@ kngni?????
+				.catch(err => {// ete es catch@ chexni 51rd toxi catch@ knkni?????
 					return {
 						status : 500,
 						send : 'server error'
@@ -108,11 +104,12 @@ const deleteItem = (itemID) => {
 				}
 			})
 }
-const updateItem = (item) => {
+const updateItem = (item,id) => {//item should validate
 	return jsonfile.readFile(allBooks, "utf-8")
 		.then( data => {
-			let changedItem =
-			data[ item.isbn ] = item;
+			for(let key in item){
+				data[ id ][ key ] = item[ key ];
+			}
 			return data;
 		})
 		.then(changedData => {
@@ -123,14 +120,14 @@ const updateItem = (item) => {
 						send : 'succsess'
 					}
 				})
-				.catch(err => {// ete es catch@ chexni 51rd toxi catch@ kngni?????
+				.catch(err => {// ete es catch@ chexni 51rd toxi catch@ knkni?????
 					return {
 						status : 500,
 						send : 'server error'
 					}
 				})
 		})
-		.catch(error => {
+		.catch(() => {
 			return {
 				status : 500,
 				send : 'server error'

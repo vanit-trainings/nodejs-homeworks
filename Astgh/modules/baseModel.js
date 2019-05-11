@@ -6,29 +6,30 @@ class base {
 	}
 
 	readItem(path, id) {
-		jsonfile.readFile(path)
-			.then((infoObj) => { return infoObj[id] })
-			.catch((err) => { return });
+		return jsonfile.readFile(path)
+			.then((infoObj) => { 
+				if (infoObj && infoObj[id] !== undefined) 
+					return infoObj[id];
+				return null;
+			});
 	}
 
 	addItem(path, id, info) {
 		jsonfile.readFile(path)
 			.then((infoObj) => {
 				infoObj[id] = info;
-				jsonfile.writeFile(path, infoObj, { spaces: 2, EOL: '\r\n' })
+				return jsonfile.writeFile(path, infoObj, { spaces: 2, EOL: '\r\n' })
 			})
-			.catch((err) => { return });
 	}
 
-	deleteItem(path, id) {
+	deleteItem(path, uniqueInfo) {
 		return jsonfile.readFile(path)
 			.then((infoObj) => {
-				if (infoObj[id]) {
-					delete (infoObj[id]);
+				if (infoObj[uniqueInfo]) {
+					delete (infoObj[uniqueInfo]);
 					return jsonfile.writeFile(path, infoObj, { spaces: 2, EOL: '\r\n' });
 				}
-			})
-			.catch((err) => { return });
+			});
 	}
 }
 

@@ -1,0 +1,23 @@
+{
+    "Avengers: Endgame" : {
+        "photo" : "https://resizing.flixster.com/Kji2aNzLQEEL_AvZIpfeS7ipO4Q=/130x0/v1.bTsxMzAxOTkzMjtqOzE4MDYwOzEyMDA7MTY4ODsyNTAw",
+        "title" : "Avengers: Endgame",
+        "tomatometer" : "95%",
+        "audience" : "89%",
+        "inTheaters" : "Apr 26"
+    },
+    "Long Shot" : {
+      "photo" : "https://resizing.flixster.com/_7uKevyqfcLKMSa9Nw03s5YhUv4=/130x0/v1.bTsxMzA1OTEzNztqOzE4MDYxOzEyMDA7MjcwMDs0MDAw",
+      "title" : "Long Shot",
+      "tomatometer" : "82%",
+      "audience" : "71%",
+      "inTheaters" : "May 3"
+    },
+    "Captain Marvel" : {
+      "photo" : "https://resizing.flixster.com/GtfO-L28SKoxpoM8IzVPzXrL060=/130x0/v1.bTsxMjkyNjcxNjtqOzE4MDU5OzEyMDA7MTY4ODsyNTAw",
+      "title" : "Captain Marvel",
+      "tomatometer" : "78%",
+      "audience" : "56%",
+      "inTheaters" : "Mar 8"
+    }
+}

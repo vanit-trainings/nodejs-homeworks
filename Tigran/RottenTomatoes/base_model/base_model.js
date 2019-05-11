@@ -1,17 +1,17 @@
 const jsonfile = require('jsonfile');
-const allBooks = "./data/allBooks.json";
+const BoxOficeMovieLists = "./data/Movie_lists/Box_ofice_movie_lists.json";
 
 
 const readAll = (path) => {
 	return jsonfile.readFile(path, "utf-8")
 	.then(data => {
-			const books = [];
-			for(let isbn in data){
-				books.push({"title" : data[isbn].title, "subtitle" : data[isbn].subtitle, "author" : data[isbn].author});
+			const films = [];
+			for(let title in data){
+				films.push(data[title]);
 			}
 			return {
 				status : 200,
-				send : books
+				send : films
 			}
 		})
 	.catch(err => {
@@ -138,7 +138,7 @@ const updateItem = (item,id) => {//item should validate
 
 
 module.exports.readAll = readAll;
-module.exports.addItem = addItem;
-module.exports.readItem = readItem;
-module.exports.deleteItem = deleteItem;
-module.exports.updateItem = updateItem;
+// module.exports.addItem = addItem;
+// module.exports.readItem = readItem;
+// module.exports.deleteItem = deleteItem;
+// module.exports.updateItem = updateItem;

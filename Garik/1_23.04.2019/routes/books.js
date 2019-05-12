@@ -67,15 +67,18 @@ router.post('/', function(req, res) {
 //2. Get all books - author, language, title
 router.get('/', function(req, res) {
 	baseObj.readAll(books).then(result => {
-		 res.status(200).send(Object.keys(result).map(item =>{
-			return {'author' : result[item].author, 'language' : result[item].language, 'title' : result[item].title};
-		}));
+		if(result.statusCode === 200){
+			return res.status(200).send(Object.keys(result.statusMessage).map(item =>{
+				return {'author' : result.statusMessage[item].author, 'language' : result.statusMessage[item].language, 'title' : result.statusMessage[item].title};
+			}));
+		}
+		res.status(result.statusCode).send(result.statusMessage);
 	}).catch((err) => {
-		res.status(500).send('Server error');
+		res.status(500).send(err.message);
 	});
 });
 
-testRequestId = (req ) => {
+const testRequestId = (req ) => {
 	let statusCode,
 		statusMessage;
 	if(req.params.id === undefined){

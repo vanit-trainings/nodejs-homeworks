@@ -1,11 +1,13 @@
 const express = require('express');
 const uniqid = require('uniqid');
 const jsonfile = require('jsonfile');
+const joi = require('joi');
 
 const crypto = require('crypto');
 const keyHash = require('../data/keyHash.js');
 const statuses = require('../data/const.js');
 const baseMod = new (require('../modules/baseModel'))();
+const dataSchema = require('../modules/joiSchema');
 
 const router = express.Router();
 
@@ -13,14 +15,14 @@ const filePath = './data/users.json';
 const logPassPath = './data/logPassId.json';
 const tokenIdPath = './data/tokenId.json';
 
-const validateLogin = function(login) {
+/*const validateLogin = function(login) {
 	const regLog = new RegExp(/^((\w+)(\.|_)?){5,16}/);
 
 	if (login.match(regLog)[ 0 ] !== null) {
 		return (login === login.match(regLog)[ 0 ]);
 	}
 	return false;
-};
+};*/
 
 const existingLogin = function(login, obj) {
 	if (obj[ login ] !== undefined) {
@@ -29,14 +31,14 @@ const existingLogin = function(login, obj) {
 	return true;
 };
 
-const validateEmail = function(email) {
+/*const validateEmail = function(email) {
 	const regEmail = new RegExp(/[a-zA-z0-9]+[._]?[a-zA-Z0-9]+[._]?[a-zA-z0-9]@[a-zA-z]+[.][a-zA-Z]{1,}/);
 
 	if (email.match(regEmail) !== null) {
 		return email === email.match(regEmail)[ 0 ];
 	}
 	return false;
-};
+};*/
 
 const existingEmail = function(obj, email) {
 	for (const key in obj) {
@@ -46,7 +48,7 @@ const existingEmail = function(obj, email) {
 	}
 	return true;
 };
-
+/*
 const validatePassword = function(password) {
 	const regPass = new RegExp(/(\w+){6,16}/);
 
@@ -116,7 +118,7 @@ const validations = function(req) {
 		statusCode: statuses.ok.code,
 		statusMessage: statuses.ok.message
 	};
-};
+};*/
 
 const hash = function(str, key) {
 	const hcode = crypto.createHmac('sha512', Buffer.from(key));
@@ -191,11 +193,13 @@ const userInfo = function(req, id) {
 };
 
 router.post('/register', (req, res) => {
-        const validationStatus = validations(req);
+    /*  const validationStatus = validations(req);
         if (validationStatus.statusCode !== statuses.ok.code) {
                 return res.status(validationStatus.statusCode).json(validationStatus.statusMessage);
-        }
-        baseMod.readAll(filePath)
+				}*/
+				const data = req.body;
+				joi.validate(data, dataSchema)
+				.then(() => baseMod.readAll(filePath))
         .then((info) => {
                  if (!existingEmail(info, req.body.email)) {
 					throw { statusCode: statuses.conflict.code, statusMessage: statuses.conflict.email};
@@ -225,7 +229,10 @@ router.post('/register', (req, res) => {
         .catch((err) => {
 				if (err.statusCode === statuses.badRequest.code || err.statusCode === statuses.conflict.code) {
                         return res.status(err.statusCode).json(err.statusMessage);
-                }
+				}
+				if (err.details[0].context.key) {
+						return res.status(statuses.badRequest.code).json({ statusMessage: statuses.badRequest[err.details[0].context.key] });
+				}
                 return res.status(statuses.serverError.code).json(statuses.serverError.message);
         });
 });

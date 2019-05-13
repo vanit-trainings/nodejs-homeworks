@@ -1,0 +1,184 @@
+{
+    "1234567": {
+        "address": {
+          "city": "",
+          "cityURL": "",
+          "html": "",
+          "latLong": {
+            "latitude": 0,
+            "longitude": 0
+          },
+          "state": "",
+          "stateFull": "",
+          "street": "",
+          "zip": "",
+          "zip4": "",
+          "zipURL": ""
+        },
+        "boundary": {
+          "hasBoundary": true,
+          "polylineCollection": [
+            {}
+          ]
+        },
+        "county": {
+          "countyName": "",
+          "countyURL": ""
+        },
+        "districtID": "",
+        "districtName": "",
+        "districtYearlyDetails": [
+          {
+            "numberOfAids": 0,
+            "numberOfCoordsSupervisors": 0,
+            "numberOfEnglishLanguageLearnerStudents": 0,
+            "numberOfGuidanceElem": 0,
+            "numberOfGuidanceSecondary": 0,
+            "numberOfGuidanceTotal": 0,
+            "numberOfLEAAdministrators": 0,
+            "numberOfLEASupportStaff": 0,
+            "numberOfLibrarians": 0,
+            "numberOfLibraryStaff": 0,
+            "numberOfOtherSupportStaff": 0,
+            "numberOfSchoolAdminSupportStaff": 0,
+            "numberOfSchoolAdministrators": 0,
+            "numberOfSpecialEdStudents": 0,
+            "numberOfStudentSupportStaff": 0,
+            "numberOfStudents": 0,
+            "numberOfTeachers": 0,
+            "numberOfTeachersElementary": 0,
+            "numberOfTeachersK": 0,
+            "numberOfTeachersPK": 0,
+            "numberOfTeachersSecondary": 0,
+            "year": 0
+          }
+        ],
+        "highGrade": "",
+        "isWithinBoundary": true,
+        "lowGrade": "",
+        "numberAlternativeSchools": 0,
+        "numberHighSchools": 0,
+        "numberMiddleSchools": 0,
+        "numberPrimarySchools": 0,
+        "numberTotalSchools": 0,
+        "phone": "",
+        "rankHistory": [
+          {
+            "rank": 0,
+            "rankOf": 0,
+            "rankScore": 0,
+            "rankStars": 0,
+            "rankStatewidePercentage": 0,
+            "year": 0
+          }
+        ],
+        "testScores": [
+          {
+            "districtTestScore": {},
+            "grade": "",
+            "schoolTestScore": {},
+            "stateTestScore": {},
+            "subject": "",
+            "test": "",
+            "tier1": "",
+            "tier2": "",
+            "tier3": "",
+            "tier4": "",
+            "tier5": "",
+            "year": 0
+          }
+        ],
+        "url": ""
+      },
+    "7654321": {
+        "address": {
+          "city": "Vanadzor",
+          "cityURL": "",
+          "html": "",
+          "latLong": {
+            "latitude": 0,
+            "longitude": 0
+          },
+          "state": "CA",
+          "stateFull": "Armenia",
+          "street": "",
+          "zip": "",
+          "zip4": "",
+          "zipURL": ""
+        },
+        "boundary": {
+          "hasBoundary": true,
+          "polylineCollection": [
+            {}
+          ]
+        },
+        "county": {
+          "countyName": "",
+          "countyURL": ""
+        },
+        "districtID": "",
+        "districtName": "",
+        "districtYearlyDetails": [
+          {
+            "numberOfAids": 0,
+            "numberOfCoordsSupervisors": 0,
+            "numberOfEnglishLanguageLearnerStudents": 0,
+            "numberOfGuidanceElem": 0,
+            "numberOfGuidanceSecondary": 0,
+            "numberOfGuidanceTotal": 0,
+            "numberOfLEAAdministrators": 0,
+            "numberOfLEASupportStaff": 0,
+            "numberOfLibrarians": 0,
+            "numberOfLibraryStaff": 0,
+            "numberOfOtherSupportStaff": 0,
+            "numberOfSchoolAdminSupportStaff": 0,
+            "numberOfSchoolAdministrators": 0,
+            "numberOfSpecialEdStudents": 0,
+            "numberOfStudentSupportStaff": 0,
+            "numberOfStudents": 0,
+            "numberOfTeachers": 0,
+            "numberOfTeachersElementary": 0,
+            "numberOfTeachersK": 0,
+            "numberOfTeachersPK": 0,
+            "numberOfTeachersSecondary": 0,
+            "year": 0
+          }
+        ],
+        "highGrade": "",
+        "isWithinBoundary": true,
+        "lowGrade": "",
+        "numberAlternativeSchools": 0,
+        "numberHighSchools": 0,
+        "numberMiddleSchools": 0,
+        "numberPrimarySchools": 0,
+        "numberTotalSchools": 0,
+        "phone": "",
+        "rankHistory": [
+          {
+            "rank": 0,
+            "rankOf": 0,
+            "rankScore": 0,
+            "rankStars": 0,
+            "rankStatewidePercentage": 0,
+            "year": 0
+          }
+        ],
+        "testScores": [
+          {
+            "districtTestScore": {},
+            "grade": "",
+            "schoolTestScore": {},
+            "stateTestScore": {},
+            "subject": "",
+            "test": "",
+            "tier1": "",
+            "tier2": "",
+            "tier3": "",
+            "tier4": "",
+            "tier5": "",
+            "year": 0
+          }
+        ],
+        "url": ""
+    }
+}

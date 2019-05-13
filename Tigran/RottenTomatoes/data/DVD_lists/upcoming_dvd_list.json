@@ -1,0 +1,20 @@
+{
+  "Shaun The Sheep" : {
+      "photo" : "https://resizing.flixster.com/eelJ1c2Fljo51pQqZDQWb8kWfsA=/130x0/v1.bTsxMjkzMjYwOTtqOzE4MDU5OzEyMDA7NTA5Ozc1NQ",
+      "title" : "Shaun The Sheep",
+      "tomatometer" : "Movie: Farmageddon",
+      "inTheaters" : "May 15"
+  },
+  "The Third Wife" : {
+      "photo" : "https://resizing.flixster.com/q9Vhl06hO6rgR6sNAHPfW1TQY4E=/130x0/v1.bTsxMzAzMTIyNDtqOzE4MDYwOzEyMDA7NDk0Ozc0MQ",
+      "title" : "The Third Wife",
+      "tomatometer" : "91%",
+      "inTheaters" : "May 15"
+  },
+  "A Dog's Journey" : {
+      "photo" : "https://resizing.flixster.com/bK5urPME5yB7giv4Bs2MqmqILe4=/130x0/v1.bTsxMjk3NzIzMTtqOzE4MDYwOzEyMDA7MzE1ODs1MDAw",
+      "title" : "A Dog's Journey",
+      "tomatometer" : "67%",
+      "inTheaters" : "May 17"
+  }
+}

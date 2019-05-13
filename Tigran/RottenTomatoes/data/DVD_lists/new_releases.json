@@ -1,0 +1,26 @@
+{
+  "Avengers: Endgame" : {
+      "photo" : "https://resizing.flixster.com/Kji2aNzLQEEL_AvZIpfeS7ipO4Q=/130x0/v1.bTsxMzAxOTkzMjtqOzE4MDYwOzEyMDA7MTY4ODsyNTAw",
+      "title" : "Avengers: Endgame",
+      "tomatometer" : "95%",
+      "audience" : "89%",
+      "inTheaters" : "Apr 26"
+  },
+  "The Intruder" : {
+      "photo" : "https://resizing.flixster.com/yflN82PmHrqI8wIjdcQODGbz0qQ=/130x0/v1.bTsxMzAyMzkxNztqOzE4MDYwOzEyMDA7NjA3Mjs5MDAw",
+      "title" : "The Intruder",
+      "tomatometer" : "28%",
+      "audience" : "53%",
+      "inTheaters" : "May 3"
+  },
+  "The Intruder2" : {
+      "photo" : "https://resizing.flixster.com/yflN82PmHrqI8wIjdcQODGbz0qQ=/130x0/v1.bTsxMzAyMzkxNztqOzE4MDYwOzEyMDA7NjA3Mjs5MDAw",
+      "title" : "The Intruder",
+      "tomatometer" : "28%",
+      "audience" : "53%",
+      "inTheaters" : "May 65"
+  }
+
+
+
+}

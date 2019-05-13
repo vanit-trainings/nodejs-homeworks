@@ -2,7 +2,17 @@ const jsonfile = require('jsonfile');
 
 class baseObj {
 	readAll(path) {
-		return jsonfile.readFile(path);
+		return jsonfile.readFile(path).then(result => {
+			return {
+				status : result,
+				statusCode : 200
+			};
+		}).catch(err => {
+			return {
+				status : 'err',
+				statusCode : 500
+			};
+		});
 	}
 
 	additem(path, key, value){

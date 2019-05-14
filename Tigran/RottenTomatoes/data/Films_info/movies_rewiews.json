@@ -26,26 +26,6 @@
 			"runtime" : "182 minutes",
 			"studio" : "Marvel Studios"
 		},
-		"critic_rewiews" : [
-			{
-				"name" : "Oliver Jones",
-				"rewiew" : "What you will be getting when you walk into an inevitably overstuffed movie theater is something singular that reflects our age in a way that none of the MCU films that preceded it have-indeed, very few Hollywood spectacles ever have.",
-				"date" : "May 1, 2019",
-				"rating" : "3.5/4",
-				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
-				"critic_rating" : "Top Critic"
-
-			},
-			{
-				"name" : "Matthew Norman",
-				"rewiew" : "The only complaint about Avengers: Endgame is that it raises the bar so high that there may well never be a superhero movie to match it.",
-				"date" : "Apr 28, 2019",
-				"rating" : "5/5",
-				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
-				"critic_rating" : "Top Critic"
-
-			}
-		],
 		"cast" : [
 			{
 				"actor" : "Robert Downey Jr.",
@@ -110,6 +90,26 @@
 			{
 				"actor" : "Gwyneth Paltrow ",
 				"role" : "as Pepper Potts"
+			}
+		],
+		"critic_rewiews" : [
+			{
+				"name" : "Oliver Jones",
+				"rewiew" : "What you will be getting when you walk into an inevitably overstuffed movie theater is something singular that reflects our age in a way that none of the MCU films that preceded it have-indeed, very few Hollywood spectacles ever have.",
+				"date" : "May 1, 2019",
+				"rating" : "3.5/4",
+				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
+				"critic_rating" : "Top Critic"
+
+			},
+			{
+				"name" : "Matthew Norman",
+				"rewiew" : "The only complaint about Avengers: Endgame is that it raises the bar so high that there may well never be a superhero movie to match it.",
+				"date" : "Apr 28, 2019",
+				"rating" : "5/5",
+				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
+				"critic_rating" : "Top Critic"
+
 			}
 		],
 		"audience_reviws" : [
@@ -159,26 +159,6 @@
 			"runtime" : "182 minutes",
 			"studio" : "Marvel Studios"
 		},
-		"critic_rewiews" : [
-			{
-				"name" : "Oliver Jones",
-				"rewiew" : "What you will be getting when you walk into an inevitably overstuffed movie theater is something singular that reflects our age in a way that none of the MCU films that preceded it have-indeed, very few Hollywood spectacles ever have.",
-				"date" : "May 1, 2019",
-				"rating" : "3.5/4",
-				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
-				"critic_rating" : "Top Critic"
-
-			},
-			{
-				"name" : "Matthew Norman",
-				"rewiew" : "The only complaint about Avengers: Endgame is that it raises the bar so high that there may well never be a superhero movie to match it.",
-				"date" : "Apr 28, 2019",
-				"rating" : "5/5",
-				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
-				"critic_rating" : "Top Critic"
-
-			}
-		],
 		"cast" : [
 			{
 				"actor" : "Robert Downey Jr.",
@@ -243,6 +223,26 @@
 			{
 				"actor" : "Gwyneth Paltrow ",
 				"role" : "as Pepper Potts"
+			}
+		],
+		"critic_rewiews" : [
+			{
+				"name" : "Oliver Jones",
+				"rewiew" : "What you will be getting when you walk into an inevitably overstuffed movie theater is something singular that reflects our age in a way that none of the MCU films that preceded it have-indeed, very few Hollywood spectacles ever have.",
+				"date" : "May 1, 2019",
+				"rating" : "3.5/4",
+				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
+				"critic_rating" : "Top Critic"
+
+			},
+			{
+				"name" : "Matthew Norman",
+				"rewiew" : "The only complaint about Avengers: Endgame is that it raises the bar so high that there may well never be a superhero movie to match it.",
+				"date" : "Apr 28, 2019",
+				"rating" : "5/5",
+				"full_rewiev" : "https://observer.com/2019/04/avengers-endgame-puts-the-mcu-in-company-with-historys-best-sagas-review/",
+				"critic_rating" : "Top Critic"
+
 			}
 		],
 		"audience_reviws" : [

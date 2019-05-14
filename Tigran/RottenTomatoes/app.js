@@ -7,6 +7,10 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var BrowseRouter = require('./routes/browse');
 
+var MovieRouter = require('./routes/movies');
+var ListsRouter = require('./routes/top_lists');
+var SearchRouter = require('./routes/search');
+
 var app = express();
 
 // view engine setup
@@ -21,6 +25,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/browse', BrowseRouter);
+app.use('/m', MovieRouter);
+app.use('/top', ListsRouter);
+app.use('/search', SearchRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

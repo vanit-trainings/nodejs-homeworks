@@ -1,0 +1,55 @@
+{
+    "TOP 100 MOVIES BY GENRE" : {
+        "Top 100 Action & Adventure Movies" : {
+            "link" : "#"
+        },
+        "Top 100 Animation Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Art House & International Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Classics Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Comedy Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Documentary Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Drama Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Horror Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Kids & Family Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Musical & Performing Arts Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Mystery & Suspense Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Romance Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Science Fiction & Fantasy Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Special Interest Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Sports & Fitness Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Television Movies"  : {
+            "link" : "#"
+        },
+        "Top 100 Western Movies"  : {
+            "link" : "#"
+        }
+    }
+}

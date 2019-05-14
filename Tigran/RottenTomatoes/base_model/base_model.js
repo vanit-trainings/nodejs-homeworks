@@ -1,7 +1,6 @@
 const jsonfile = require('jsonfile');
 const BoxOficeMovieLists = "./data/Movie_lists/Box_ofice_movie_lists.json";
 
-
 const readAll = (path) => {
 	return jsonfile.readFile(path, "utf-8")
 	.then(data => {
@@ -21,123 +20,55 @@ const readAll = (path) => {
 		}
 	});
 }
-
-
-const addItem = (item) => {//item (new book) should validate
-	return jsonfile.readFile(allBooks, "utf-8")
-		.then( data => {
-			data[item.isbn] = item;
-			return data;
-		})
-		.then(changedData => {
-			return jsonfile.writeFile(allBooks, changedData, { spaces: 2, EOL: '\r\n' })
-				.then(() => {
-					return {
-						status : 200,
-						send : 'succsess'
-					}
-				})
-				.catch(err => {// ete es catch@ chexni 51rd toxi catch@ knkni?????
-					return {
-						status : 500,
-						send : 'server error'
-					}
-				})
-		})
-		.catch(error => {
-			return {
-				status : 500,
-				send : 'server error'
-			}
-		})
-}
-
-const readItem = (itemID) => {
-	return 	jsonfile.readFile(allBooks, 'utf-8')
-			.then( data => {
-				if (!data[itemID]) {
-					return {
-						status : 404,
-						send : 'not found'
-					}
-				}
+const readMovie = (path, id) => {
+	return jsonfile.readFile(path, "utf-8")
+	.then(data => {
+			const film = data[id];
+			if (film) {
 				return {
 					status : 200,
-					send : data[ itemID ]
+					send : film
 				}
-			})
-			.catch(err => {
-				return {
-					status : 500,
-					send : 'server error'
-				}
-			});
-}
-const deleteItem = (itemID) => {
-	return jsonfile.readFile(allBooks,'utf-8')
-			.then(data => {
-				if (!data[ itemID ]) {
-					throw new Error()//reject
-				}
-				delete data[ itemID ];
-				return data;//resolve
-			})
-			.then(changedData => {
-				return jsonfile.writeFile(allBooks, changedData, { spaces: 2, EOL: '\r\n' })
-						.then(() => {
-							return {
-								status : 200,
-								send : 'succsess'
-							}
-						})
-						.catch(err => {// ete es catch@ chexni 51rd toxi catch@ kngni?????
-							return {
-								status : 500,
-								send : 'server error'
-							}
-						})
-			})
-			.catch(err => {
-				return {
-					status : 500,
-					send : 'server error'
-				}
-			})
-}
-const updateItem = (item,id) => {//item should validate
-	return jsonfile.readFile(allBooks, "utf-8")
-		.then( data => {
-			for(let key in item){
-				data[ id ][ key ] = item[ key ];
 			}
-			return data;
-		})
-		.then(changedData => {
-			return jsonfile.writeFile(allBooks, changedData, { spaces: 2, EOL: '\r\n' })
-				.then(() => {
-					return {
-						status : 200,
-						send : 'succsess'
-					}
-				})
-				.catch(err => {// ete es catch@ chexni 51rd toxi catch@ knkni?????
-					return {
-						status : 500,
-						send : 'server error'
-					}
-				})
-		})
-		.catch(() => {
 			return {
-				status : 500,
-				send : 'server error'
+				status : 404,
+				send : "not found"
 			}
+
 		})
+	.catch(err => {
+		return {
+			status : 500,
+			send : 'server error'
+		}
+	});
 }
-
-
+const searchForKey = (object,searchKey) => {
+	let result = [];
+	for (let movie in object) {
+		if (movie.title.indexOf(searchKey) !== -1) {
+			result.push(movie);
+		}
+	}
+	return result;
+}
+const search = (path1,searchKey) => {
+	let result = [];
+	return jsonfile.readFile(path1,'utf-8')
+			.then(data => {
+				for (let movie in data) {
+					if (data[movie].title.indexOf(searchKey) !== -1) {
+						result.push(data[movie]);
+					}
+				}
+				return result;
+			})
+}
 
 module.exports.readAll = readAll;
+module.exports.readMovie = readMovie;
+module.exports.search = search;
+
 // module.exports.addItem = addItem;
 // module.exports.readItem = readItem;
 // module.exports.deleteItem = deleteItem;

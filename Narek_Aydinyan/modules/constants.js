@@ -4,6 +4,8 @@ module.exports = {
     "badRequest": { "code": 400, 
                     "firstName": { "statusMessage": "Enter valid firstName" }, 
                     "lastName": { "statusMessage": "Enter valid lastName" }, 
+                    "gender": { "statusMessage": "Enter valid gender" }, 
+                    "birthDate": { "statusMessage": "Enter valid birthDate" }, 
                     "login": { "statusMessage": "Enter valid login" },
                     "email": { "statusMessage": "Enter valid email" },
                     "password": { "statusMessage": "Enter valid password" }, 

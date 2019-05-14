@@ -118,42 +118,42 @@ const isSignIn = function(id, data) {
 router.post('/register', (req, res) => {
     joi.validate(req.body, regSchema)
         .then(() => baseModel.readAll(userInfoPath))
-        .then((userInfoDb) => {
-            if (!existingEmail(req.body.email, userInfoDb)) {
-                throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
-            } else {
-                return baseModel.readAll(logPassPath);
-            }
-        })
-        .then((logPassDb) => {
-            if (!existingLogin(req.body.login, logPassDb)) {
-                throw { statusCode: 409, statusMessage: statusCodes.conflict.login };
-            } else {
-                const id = uniqid();
-                const userInfo = getUserInfoObj(req.body, id);
-        
-                baseModel.addItem(userInfoPath, userInfo.userId, userInfo);
-                return userInfo.userId;
-            }
-        })
-        .then((id) => {
-            const logPass = {};
-
-            logPass.password = (sha512(req.body.password, Key.pass));
-            logPass.userId = id;
-            baseModel.addItem(logPassPath, req.body.login, logPass);
-        })
-        .then(() => res.status(statusCodes.ok.code).json(statusCodes.ok.message))
-        .catch((err) => {
-            if (err.statusCode === statusCodes.conflict.code) {
-                return res.status(err.statusCode).json(err.statusMessage);
-            }
-            if (err.details[0].context.key) {
-                console.log(err.details[0].context.key);
-                return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest[err.details[0].context.key]);
-            }
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        });
+            .then((userInfoDb) => {
+                if (!existingEmail(req.body.email, userInfoDb)) {
+                    throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
+                } else {
+                    return baseModel.readAll(logPassPath);
+                }
+            })
+                .then((logPassDb) => {
+                    if (!existingLogin(req.body.login, logPassDb)) {
+                        throw { statusCode: 409, statusMessage: statusCodes.conflict.login };
+                    } else {
+                        const id = uniqid();
+                        const userInfo = getUserInfoObj(req.body, id);
+                    
+                        baseModel.addItem(userInfoPath, userInfo.userId, userInfo);
+                        return userInfo.userId;
+                    }
+                })
+                    .then((id) => {
+                        const logPass = {};
+                    
+                        logPass.password = (sha512(req.body.password, Key.pass));
+                        logPass.userId = id;
+                        baseModel.addItem(logPassPath, req.body.login, logPass);
+                    })
+                        .then(() => res.status(statusCodes.ok.code).json(statusCodes.ok.message))
+                            .catch((err) => {
+                                if (err.statusCode === statusCodes.conflict.code) {
+                                    return res.status(err.statusCode).json(err.statusMessage);
+                                }
+                                if (err.details[0].context.key) {
+                                    console.log(err.details[0].context.key);
+                                    return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest[err.details[0].context.key]);
+                                }
+                                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+                            });
 });
 
 router.post('/login', (req, res) => {
@@ -172,29 +172,29 @@ router.post('/login', (req, res) => {
                 return { id: id, tokenIdDb: tokenIdDb };
             }
         })
-        .then((info) => {
-            const signInStatus = isSignIn(info.id, info.tokenIdDb);
-            
-            if (!signInStatus) {
-                throw { statusCode: statusCodes.conflict.code, statusMessage: statusCodes.conflict.allreadyLogin };
-            } else {
-                const token = getBearerToken(info.id);
-                const refreshT = crypto.randomBytes(15).toString('hex');
-                const tokObj = {};
+            .then((info) => {
+                const signInStatus = isSignIn(info.id, info.tokenIdDb);
 
-                tokObj.userId = info.id;
-                tokObj.refreshToken = refreshT;
-                baseModel.addItem(tokenIdPath, token, tokObj);
-                return { BearerToken: token, RefreshToken: refreshT };
-            }
-        })
-        .then((messageInfo) => res.status(statusCodes.ok.code).json(messageInfo))
-        .catch((err) => {
-            if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
-                return res.status(err.statusCode).json(err.statusMessage);
-            }
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        });
+                if (!signInStatus) {
+                    throw { statusCode: statusCodes.conflict.code, statusMessage: statusCodes.conflict.allreadyLogin };
+                } else {
+                    const token = getBearerToken(info.id);
+                    const refreshT = crypto.randomBytes(15).toString('hex');
+                    const tokObj = {};
+
+                    tokObj.userId = info.id;
+                    tokObj.refreshToken = refreshT;
+                    baseModel.addItem(tokenIdPath, token, tokObj);
+                    return { BearerToken: token, RefreshToken: refreshT };
+                }
+            })
+                .then((messageInfo) => res.status(statusCodes.ok.code).json(messageInfo))
+                    .catch((err) => {
+                        if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
+                            return res.status(err.statusCode).json(err.statusMessage);
+                        }
+                        return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+                    });
 });
 
 router.get('/logout', (req, res) => {

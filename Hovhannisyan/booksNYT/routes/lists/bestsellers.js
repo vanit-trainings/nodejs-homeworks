@@ -1,31 +1,33 @@
-const express = require("express");
+const express = require('express');
+
 const router = express.Router();
 const jsonfile = require('jsonfile');
-const baseModel = './baseMod.js';
+
 const combine = './data/combinedPrint.json';
 const hardcover = './data/hardcoverFiction.json';
-const bookReview = './data/bookReview.json';
 const serverError = 500;
 const OK = 200;
+const five = 5;
 
 router.get('/', (req, res) => {
-    let lists = {
-        combine : [],
-        hardcover : []
-    } ;
-    jsonfile.readFile(combine, (err, data) => {
-        if (err) {
+    const lists = {
+        combine: [],
+        hardcover: []
+    };
+
+    jsonfile.readFile(combine, (err1, data) => {
+        if (err1) {
             return res.status(serverError).send('Server error1!');
         }
-        for(let i = 0; i < 5;i++){
-           lists.combine.push(data[Object.keys(data)[i]]) ; 
+        for (let i = 0; i < five; i++) {
+            lists.combine.push(data[ Object.keys(data)[ i ] ]);
         }
-        jsonfile.readFile(hardcover, (err, data2) => {
-            if (err) {
-                return res.status(serverError).send('Server error2!');
+        jsonfile.readFile(hardcover, (err2, data2) => {
+            if (err2) {
+                return res.status(serverError).send('Server error!');
             }
-            for(let i = 0; i < 5;i++){
-                lists.hardcover.push(data2[Object.keys(data2)[i]]) ; 
+            for (let i = 0; i < five; i++) {
+                lists.hardcover.push(data2[ Object.keys(data2)[ i ] ]);
             }
             return res.status(OK).send(lists);
         });
@@ -39,7 +41,6 @@ router.get('/combined-print-and-e-book-fiction', (req, res) => {
         }
         return res.status(OK).send(data);
     });
-
 });
 router.get('/hardcover-fiction', (req, res) => {
     jsonfile.readFile(hardcover, (err, data) => {

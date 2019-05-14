@@ -1,0 +1,83 @@
+{
+    "WHERE THE CRAWDADS SING": {
+        "timeOnTheList": "34 WEEKS ON THE LIST",
+        "author": "by Delia Owens Putnam",
+        "description": "In a quiet town on the North Carolina coast in 1969, a young woman who survived alone in the marsh becomes a murder suspect.",
+        "ratingPlace": "1",
+        "buyLink": "https://www.amazon.com/Where-Crawdads-Sing-Delia-Owens/dp/0735219095?tag=NYTBS-20",
+        "photo": "https://s1.nyt.com/du/books/images/9780735219090.jpg"
+    },
+    "THE 18TH ABDUCTION": {
+        "timeOnTheList": "NEW THIS WEEK",
+        "author": "by James Patterson and Maxine Paetro Little, Brown ",
+        "description": "The 18th book in the Women's Murder Club series. Lindsay Boxer investigates the disappearance of three female teachers.",
+        "ratingPlace": "2",
+        "buyLink": "https://www.amazon.com/18th-Abduction-Womens-Murder-Club-ebook/dp/B07CRJ2H4L?tag=NYTBS-20",
+        "photo": "https://s1.nyt.com/du/books/images/9780316528443.jpg"
+    },
+    "REDEMPTION": {
+        "timeOnTheList": "3 WEEKS ON THE LIST",
+        "author": "by David Baldacci Grand Central",
+        "description": "The fifth book in the Memory Man series. The first man Amos Decker put behind bars asks to have his name cleared.",
+        "ratingPlace": "3",
+        "buyLink": "https://www.amazon.com/Redemption-Memory-Man-Book-5-ebook/dp/B07G76M5LD?tag=NYTBS-20",
+        "photo": "https://s1.nyt.com/du/books/images/9781538761434.jpg"
+    },
+    "NEON PREY": {
+        "timeOnTheList": "2 WEEKS ON THE LIST",
+        "author": "by John Sandford Putnam",
+        "description": "The 29th book in the Prey series. Lucas Davenport goes after a serial killer.",
+        "ratingPlace": "4",
+        "buyLink": "https://www.amazon.com/Neon-Prey-Novel-Book-29-ebook/dp/B07FZN9DY5?tag=NYTBS-20",
+        "photo": "https://s1.nyt.com/du/books/images/9780525536598.jpg"
+    },
+    "LOST ROSES": {
+        "timeOnTheList": "4 WEEKS ON THE LIST",
+        "author": "by Martha Hall Kelly Ballantine",
+        "description": "In 1914, the New York socialite Eliza Ferriday works to help White Russian families escape from the revolution.",
+        "buyLink": "https://www.amazon.com/Lost-Roses-Martha-Hall-Kelly/dp/1524796379?tag=NYTBS-20",
+        "ratingPlace": "5",
+        "photo": "https://s1.nyt.com/du/books/images/9781524796372.jpg"
+    },
+    "NORMAL PEOPLE": {
+        "timeOnTheList": "3 WEEKS ON THE LIST",
+        "author": "by Sally Rooney Hogarth",
+        "description": "The connection between a high school star athlete and a loner ebbs and flows when they go to Trinity College in Dublin.",
+        "buyLink": "https://www.amazon.com/Normal-People-Novel-Sally-Rooney/dp/1984822179?tag=NYTBS-20",
+        "ratingPlace": "6",
+        "photo": "https://s1.nyt.com/du/books/images/9781984822178.jpg"
+    },
+    "THE SILENT PATIENT": {
+        "timeOnTheList": "13 WEEKS ON THE LIST",
+        "author": "by Alex Michaelides Celadon",
+        "description": "Theo Faber looks into the mystery of a famous painter who stops speaking after shooting her husband.",
+        "buyLink": "https://www.amazon.com/Silent-Patient-Alex-Michaelides/dp/1250301696?tag=NYTBS-20",
+        "ratingPlace": "7",
+        "photo": "https://s1.nyt.com/du/books/images/9781250301697.jpg"
+    },
+    "A WOMAN IS NO MAN": {
+        "timeOnTheList": "NEW THIS WEEK",
+        "author": "by Etaf Rum Harper",
+        "description": "A Palestinian-American teenager, much like her mother before her, faces the prospect of an arranged marriage.",
+        "buyLink": "https://www.amazon.com/Woman-No-Man-Novel/dp/0062699768?tag=NYTBS-20",
+        "ratingPlace": "8",
+        "photo": "https://s1.nyt.com/du/books/images/9780062699763.jpg"
+    },
+    "FIRE AND BLOOD": {
+        "timeOnTheList": "19 WEEKS ON THE LIST",
+        "author": "by George R.R. Martin Bantam",
+        "description": "The first volume of the two-part history of the Targaryens in Westeros.",
+        "buyLink": "https://www.amazon.com/Fire-Blood-Thrones-Targaryen-History/dp/152479628X?tag=NYTBS-20",
+        "ratingPlace": "9",
+        "photo": "https://s1.nyt.com/du/books/images/9781524796280.jpg"
+    },
+    "SOMEONE KNOWS": {
+        "timeOnTheList": "4 WEEKS ON THE LIST",
+        "author": "by Lisa Scottoline Putnam        ",
+        "description": "A dark secret emerges when Allie Garvey returns home to attend a childhood friend’s funeral.",
+        "buyLink": "https://www.amazon.com/Someone-Knows-Lisa-Scottoline/dp/0525539646?tag=NYTBS-20",
+        "ratingPlace": "10",
+        "photo": "https://s1.nyt.com/du/books/images/9780525539643.jpg"
+    }
+    
+}

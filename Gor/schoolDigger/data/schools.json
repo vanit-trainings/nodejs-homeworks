@@ -1,0 +1,108 @@
+{
+  "098765432112": {
+    "address": {
+      "city": "",
+      "cityURL": "",
+      "html": "",
+      "latLong": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "state": "",
+      "stateFull": "",
+      "street": "",
+      "zip": "",
+      "zip4": "",
+      "zipURL": ""
+    },
+    "boundary": {
+      "hasBoundary": true,
+      "polylineCollection": [
+        {}
+      ]
+    },
+    "county": {
+      "countyName": "",
+      "countyURL": ""
+    },
+    "district": {
+      "districtID": "",
+      "districtName": "",
+      "rankURL": "",
+      "url": ""
+    },
+    "highGrade": "",
+    "isCharterSchool": "",
+    "isMagnetSchool": "",
+    "isPrivate": true,
+    "isTitleISchool": "",
+    "isTitleISchoolwideSchool": "",
+    "isVirtualSchool": "",
+    "locale": "",
+    "lowGrade": "",
+    "phone": "",
+    "privateCoed": "",
+    "privateDays": 0,
+    "privateHasLibrary": true,
+    "privateHours": 0,
+    "privateOrientation": "",
+    "rankHistory": [
+      {
+        "averageStandardScore": 0,
+        "rank": 0,
+        "rankLevel": "",
+        "rankOf": 0,
+        "rankStars": 0,
+        "rankStatewidePercentage": 0,
+        "year": 0
+      }
+    ],
+    "rankMovement": 0,
+    "schoolLevel": "",
+    "schoolName": "",
+    "schoolYearlyDetails": [
+      {
+        "numberOfStudents": 0,
+        "numberofAfricanAmericanStudents": 0,
+        "numberofAsianStudents": 0,
+        "numberofHispanicStudents": 0,
+        "numberofIndianStudents": 0,
+        "numberofPacificIslanderStudents": 0,
+        "numberofTwoOrMoreRaceStudents": 0,
+        "numberofUnspecifiedRaceStudents": 0,
+        "numberofWhiteStudents": 0,
+        "percentFreeDiscLunch": 0,
+        "percentofAfricanAmericanStudents": 0,
+        "percentofAsianStudents": 0,
+        "percentofHispanicStudents": 0,
+        "percentofIndianStudents": 0,
+        "percentofPacificIslanderStudents": 0,
+        "percentofTwoOrMoreRaceStudents": 0,
+        "percentofUnspecifiedRaceStudents": 0,
+        "percentofWhiteStudents": 0,
+        "pupilTeacherRatio": 0,
+        "teachersFulltime": 0,
+        "year": 0
+      }
+    ],
+    "schoolid": "",
+    "testScores": [
+      {
+        "districtTestScore": {},
+        "grade": "",
+        "schoolTestScore": {},
+        "stateTestScore": {},
+        "subject": "",
+        "test": "",
+        "tier1": "",
+        "tier2": "",
+        "tier3": "",
+        "tier4": "",
+        "tier5": "",
+        "year": 0
+      }
+    ],
+    "url": "",
+    "urlCompare": ""
+  }
+}

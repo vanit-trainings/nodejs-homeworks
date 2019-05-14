@@ -1,0 +1,20 @@
+{
+  "Tolkien" : {
+      "photo" : "https://resizing.flixster.com/3rCgl5iV6tXHRYXOj4L9xn-RR90=/130x0/v1.bTsxMzAyMzk0MDtqOzE4MDYwOzEyMDA7MTM1MDsyMDAw",
+      "title" : "Tolkien",
+      "tomatometer" : "47%",
+      "inTheaters" : "May 10"
+  },
+  "Poms" : {
+      "photo" : "https://resizing.flixster.com/daBOsoeQXdYZbQ-VnNakt-T79bk=/130x0/v1.bTsxMzA0OTgwMDtqOzE4MDYxOzEyMDA7MzM3NTs1MDAw",
+      "title" : "Poms",
+      "tomatometer" : "31%",
+      "inTheaters" : "May 10"
+  },
+  "Pokémon Detective Pikachu" : {
+      "photo" : "https://resizing.flixster.com/R6Tpr6B2Hn2-qzYFHQdI9Yss_BQ=/130x0/v1.bTsxMzAwNDk0ODtqOzE4MDYwOzEyMDA7Mjc2NDs0MDk2",
+      "title" : "Pokémon Detective Pikachu",
+      "tomatometer" : "62%",
+      "inTheaters" : "May 10"
+    }
+}

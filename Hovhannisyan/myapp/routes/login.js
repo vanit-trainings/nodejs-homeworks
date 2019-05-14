@@ -2,8 +2,8 @@ const express = require('express');
 //const require = require('../baseModules/baseMod.js')
 const router = express.Router();
 const jsonfile = require('jsonfile');
-const validate = new (require('../baseModeles/validation.js'))
-const base = new (require('../baseModeles/baseMod'));
+const validate = require('../baseModeles/validation')
+const model = require('../baseModeles/baseMod');
 const filepath = './data/users.json';
 const loginedUsers = './data/loginedUsers.json';
 const crypto = require('crypto');
@@ -55,7 +55,7 @@ const tokenGenerate = (username,date) => {
 };
 
 router.post('/registration', (req, res) => {
-    jsonfile.readFile(filepath, (err1, obj) => {
+    /*jsonfile.readFile(filepath, (err1, obj) => {
         if (err1) { 
             return res.status(serverError).send('Server error');
         }
@@ -68,22 +68,46 @@ router.post('/registration', (req, res) => {
         if (obj[req.body.username]) {
             return res.status(badRequest).send('Username is already existed');
         }
+*/
+        model.readAll(filepath)
+        .then(data => { 
+             res.send(data)
+            // if(data[req.body.username]){
+            //     return res.status(badRequest).send('Username is already existed');
+            // }
+            // data[req.body.username] = {
+            //     username: req.body.username,
+            //     password: toCode(req.body.password,keyword),
+            //     // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
+            //     email: req.body.email
+            //     };
+            //     return data;
+        })
+        // .then(changedData=>{
+        //     addItem(filepath,req.body.username,data[req.body.username])
+        //     return 'OK';
+        // })
+        // .then(resp => {
+        //     return res.send('resp');
+        // })
+        .catch(err=>{ res.send('err')});
 
-        obj[req.body.username] = {
-            username: req.body.username,
-            password: toCode(req.body.password,keyword),
-            // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
-            email: req.body.email
 
-        };
-        jsonfile.writeFile(filepath, obj, { spaces: 4, EOL: '\r\n' }, (err) => {
-            if (err) {
-                return res.status(serverError).send('Server error');
-            }
-            return res.status(OK).send('ok');
-        });
-    });
-});
+        // obj[req.body.username] = {
+        //     username: req.body.username,
+        //     password: toCode(req.body.password,keyword),
+        //     // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
+        //     email: req.body.email
+
+        // };
+//         jsonfile.writeFile(filepath, obj, { spaces: 4, EOL: '\r\n' }, (err) => {
+//             if (err) {
+//                 return res.status(serverError).send('Server error');
+//             }
+//             return res.status(OK).send('ok');
+//         });
+//     });
+ });
 
 
 

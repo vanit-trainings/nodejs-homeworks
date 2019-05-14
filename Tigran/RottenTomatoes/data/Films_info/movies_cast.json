@@ -1,0 +1,134 @@
+{
+	"avengers_endgame" : [
+		{
+			"actor" : "Robert Downey Jr.",
+			"role" : "as Tony Stark/Iron Man"
+		},
+		{
+			"actor" : "Chris Evans",
+			"role" : "as Steve Rogers/Captain America"
+		},
+		{
+			"actor" : "Mark Ruffalo",
+			"role" : "as Bruce Banner/Hulk"
+		},
+		{
+			"actor" : "Chris Hemsworth ",
+			"role" : "as Thor"
+		},
+		{
+			"actor" : "Scarlett Johansson ",
+			"role" : "as Natasha Romanoff/Black Widow"
+		},
+		{
+			"actor" : "Jeremy Renner",
+			"role" : "as Clint Barton/Hawkeye"
+		},
+		{
+			"actor" : "Don Cheadle",
+			"role" : "as James Rhodes/War Machine"
+		},
+		{
+			"actor" : "Paul Rudd",
+			"role" : "as Scott Lang/Ant-Man"
+		},
+		{
+			"actor" : "Brie Larson",
+			"role" : "as Carol Danvers/Captain Marvel"
+		},
+		{
+			"actor" : "Karen Gillan ",
+			"role" : "as Nebula"
+		},
+		{
+			"actor" : "Danai Gurira",
+			"role" : "as Okoye"
+		},
+		{
+			"actor" : "Bradley Cooper",
+			"role" : "as Rocket (voice)"
+		},
+		{
+			"actor" : "Josh Brolin ",
+			"role" : "as Thanos"
+		},
+		{
+			"actor" : "Winston Duke",
+			"role" : "as M'Baku"
+		},
+		{
+			"actor" : "Benedict Wong",
+			"role" : "as Wong"
+		},
+		{
+			"actor" : "Gwyneth Paltrow ",
+			"role" : "as Pepper Potts"
+		}
+	],
+	"long_shot_2019" : [
+		{
+			"actor" : "Robert Downey Jr.",
+			"role" : "as Tony Stark/Iron Man"
+		},
+		{
+			"actor" : "Chris Evans",
+			"role" : "as Steve Rogers/Captain America"
+		},
+		{
+			"actor" : "Mark Ruffalo",
+			"role" : "as Bruce Banner/Hulk"
+		},
+		{
+			"actor" : "Chris Hemsworth ",
+			"role" : "as Thor"
+		},
+		{
+			"actor" : "Scarlett Johansson ",
+			"role" : "as Natasha Romanoff/Black Widow"
+		},
+		{
+			"actor" : "Jeremy Renner",
+			"role" : "as Clint Barton/Hawkeye"
+		},
+		{
+			"actor" : "Don Cheadle",
+			"role" : "as James Rhodes/War Machine"
+		},
+		{
+			"actor" : "Paul Rudd",
+			"role" : "as Scott Lang/Ant-Man"
+		},
+		{
+			"actor" : "Brie Larson",
+			"role" : "as Carol Danvers/Captain Marvel"
+		},
+		{
+			"actor" : "Karen Gillan ",
+			"role" : "as Nebula"
+		},
+		{
+			"actor" : "Danai Gurira",
+			"role" : "as Okoye"
+		},
+		{
+			"actor" : "Bradley Cooper",
+			"role" : "as Rocket (voice)"
+		},
+		{
+			"actor" : "Josh Brolin ",
+			"role" : "as Thanos"
+		},
+		{
+			"actor" : "Winston Duke",
+			"role" : "as M'Baku"
+		},
+		{
+			"actor" : "Benedict Wong",
+			"role" : "as Wong"
+		},
+		{
+			"actor" : "Gwyneth Paltrow ",
+			"role" : "as Pepper Potts"
+		}
+	]
+}

@@ -4,25 +4,25 @@ module.exports = {
     "badRequest": { "code": 400, 
                     "firstName": { "statusMessage": "Enter valid firstName" }, 
                     "lastName": { "statusMessage": "Enter valid lastName" }, 
+                    "gender": { "statusMessage": "Enter valid gender" },
                     "login": { "statusMessage": "Enter valid login" },
                     "email": { "statusMessage": "Enter valid email" },
                     "password": { "statusMessage": "Enter valid password" }, 
                     "body": { "statusMessage": "Body is empty" },
                     "logPass": { "statusMessage": "Enter valid login and password" } },
     
-    "unauthorized": { "code": 401, "message": { "statusMessage": "Unauthorized" } },
+    "unauthorized": { "code": 401, "message": { "statusMessage": "The request requires user authentication" } },
     
-    "notFound": { "code": 404, "message": { "statusMessage": "User not found" } },
+    "notFound": { "code": 404, "message": { "statusMessage": "The server has not found anything matching the Request-URL" } },
     
     "conflict": { "code": 409, 
-                  "login": { "statusMessage": "Login already busy" },
-                  "email": { "statusMessage": "Email already busy" },
-                  "allreadyLogin": { "statusMessage": "You are already logged in" },
-                  "token": { "statusMessage": "Your token doesnt need to be refreshed" } },
+                  "login": { "statusMessage": "Login is already busy" },
+                  "email": { "statusMessage": "Email is already busy" },
+                  "token": { "statusMessage": "Token doesn't need to be updated" } },
     
     "preconditionFailed": { "code": 412, "message": { "statusMessage": "Refresh token is missing" } },
 
-    "updateRequired": { "code": 426, "message": { "statusMessage": "Token update required" } },
+    "upgradeRequired": { "code": 426, "message": { "statusMessage": "Token update is required" } },
 
-    "serverError": { "code": 500, "message": { "statusMessage": "Server error" } }
+    "internalServerError": { "code": 500, "message": { "statusMessage": "Server error" } }
 }

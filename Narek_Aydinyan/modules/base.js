@@ -1,47 +1,35 @@
 const jsonfile = require('jsonfile');
 
-class baseObj{
+class baseObj {
     readAll(filePath) {
-        return jsonfile.readFile(filePath)
+        return jsonfile.readFile(filePath);
     }
     
     addItem(filePath, key, value) {
-        this.readAll(filePath).
-        then((data) => {
-        data[key] = value;
-            return jsonfile.writeFile(filePath, data, { spaces: 2, EOL: '\r\n' })
-        }).
-        catch((err) => {
-            return ;
-        });
+        this.readAll(filePath)
+            .then((data) => {
+                data[ key ] = value;
+                return jsonfile.writeFile(filePath, data, { spaces: 2, EOL: '\r\n' });
+            });
     }
 
     deleteItem(filePath, key) {
-        this.readAll(filePath).
-        then((data) => {
-            if (data[key]) {
-                delete(data[key]);
-                return jsonfile.writeFile(filePath, data, { spaces: 2, EOL: '\r\n' })
-            }
-        }).
-        catch((err) => {
-            return ;
-        });
+        return jsonfile.readFile(filePath)
+            .then((data) => {
+                delete (data[ key ]);
+                return jsonfile.writeFile(filePath, data, { spaces: 2, EOL: '\r\n' });
+            });
     }
 
     readItem(filePath, key) {
-        this.readAll(filePath).
-        then((data) => {
-            if (data[key]) {
-                return data[key];
-            }
-            else {
+        return jsonfile.readFile(filePath)
+            .then((data) => {
+                if (data && data[ key ] !== undefined) {
+                    return data[ key ];
+                }
+            
                 return null;
-            }
-        }).
-        catch((err) => {
-            return ;
-        });
+            });
     }
 }
 

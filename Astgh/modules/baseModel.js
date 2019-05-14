@@ -8,8 +8,9 @@ class base {
 	readItem(path, id) {
 		return jsonfile.readFile(path)
 			.then((infoObj) => { 
-				if (infoObj && infoObj[id] !== undefined) 
+				if (infoObj && infoObj[id] !== undefined) {
 					return infoObj[id];
+				}
 				return null;
 			});
 	}

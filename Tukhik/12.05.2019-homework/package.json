@@ -1,5 +1,5 @@
 {
-  "name": "myapp",
+  "name": "nodejs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -13,9 +13,5 @@
     "http-errors": "~1.6.2",
     "jsonfile": "^5.0.0",
     "morgan": "~1.9.0"
-  },
-  "devDependencies": {
-    "eslint": "^5.16.0",
-    "nodemon": "^1.19.0"
   }
 }

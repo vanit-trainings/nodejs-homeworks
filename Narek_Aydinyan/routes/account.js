@@ -1,11 +1,13 @@
 const express = require('express');
 const uniqid = require('uniqid');
+const joi = require('joi');
 
 const router = express.Router();
 const crypto = require('crypto');
 const Key = require('../data/.key.js');
-const statusCodes = require('../modules/constants.js');
+const statusCodes = require('../modules/constants');
 const baseModel = new (require('../modules/base'))();
+const regSchema = require('../modules/schemas')
 
 const userInfoPath = './data/users.json';
 const logPassPath = './data/logPassId.json';
@@ -69,29 +71,11 @@ const validateToken = function(userToken) {
     return { statusCode: statusCodes.ok.code, userId: tokenObj.info.userId };
 };
 
-const validateLogin = function(login) {
-    const regLog = new RegExp(/^((\w+)(\.|_)?){5,16}/);
-
-    if (login.match(regLog) !== null) {
-        return (login === login.match(regLog)[ 0 ]);
-    }
-    return false;
-};
-
 const existingLogin = function(login, data) {
     if (data[ login ] !== undefined) {
         return false;
     }
     return true;
-};
-
-const validateEmail = function(email) {
-    const regEmail = new RegExp(/[a-zA-z0-9]+[._]?[a-zA-Z0-9]+[._]?[a-zA-z0-9]@[a-zA-z]+[.][a-zA-Z]{1,}/);
-
-    if (email.match(regEmail) !== null) {
-        return email === email.match(regEmail)[ 0 ];
-    }
-    return false;
 };
 
 const existingEmail = function(email, data) {
@@ -100,22 +84,8 @@ const existingEmail = function(email, data) {
             return false;
         }
     }
+    console.log('true');
     return true;
-};
-
-const validatePassword = function(password) {
-    const regPass = new RegExp(/(\w+){6,16}/);
-
-    return (password === password.match(regPass)[ 0 ]);
-};
-
-const validateName = function(name) {
-    const regName = new RegExp(/^[A-Za-z]+/);
-
-    if (name.match(regName) !== null) {
-        return (name === name.match(regName)[ 0 ]);
-    }
-    return false;
 };
 
 const getUserInfoObj = function(info, id) {
@@ -145,68 +115,45 @@ const isSignIn = function(id, data) {
     return true;
 };
 
-const validateRegistrReq = function(req) {
-    if (Object.keys(req.body).length === 0) {
-        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.body };
-    }
-    if (!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
-        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.login };
-    }
-    if (!validatePassword(req.body.password)) {
-        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.password };
-    }
-    if (!validateName(req.body.firstName)) {
-        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.firstName };
-    }
-    if (!validateName(req.body.lastName)) {
-        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.lastName };
-    }
-    if (!validateEmail(req.body.email)) {
-        return { statusCode: statusCodes.badRequest.code, statusMessage: statusCodes.badRequest.email };
-    }
-    return { statusCode: statusCodes.ok.code };
-};
-
 router.post('/register', (req, res) => {
-    const status = validateRegistrReq(req);
-
-    if (status.statusCode !== statusCodes.ok.code) {
-        return res.status(status.statusCode).json(status.statusMessage);
-    }
- 
-    baseModel.readAll(userInfoPath)
-        .then((userInfoDb) => {
-            if (!existingEmail(req.body.email, userInfoDb)) {
-                throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
-            } else {
-                return baseModel.readAll(logPassPath);
-            }
-        })
-        .then((logPassDb) => {
-            if (!existingLogin(req.body.login, logPassDb)) {
-                throw { statusCode: 409, statusMessage: statusCodes.conflict.login };
-            } else {
-                const id = uniqid();
-                const userInfo = getUserInfoObj(req.body, id);
-        
-                baseModel.addItem(userInfoPath, userInfo.userId, userInfo);
-                return userInfo.userId;
-            }
-        })
-        .then((id) => {
-            const logPass = {};
-
-            logPass.password = (sha512(req.body.password, Key.pass));
-            logPass.userId = id;
-            baseModel.addItem(logPassPath, req.body.login, logPass);
-        })
-        .then(() => res.status(statusCodes.ok.code).json(statusCodes.ok.message))
-        .catch((err) => {
-            if (err.statusCode === statusCodes.conflict.code) {
-                return res.status(err.statusCode).json(err.statusMessage);
-            }
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        });
+    joi.validate(req.body, regSchema)
+        .then(() => baseModel.readAll(userInfoPath))
+            .then((userInfoDb) => {
+                if (!existingEmail(req.body.email, userInfoDb)) {
+                    throw { statusCode: 409, statusMessage: statusCodes.conflict.email };
+                } else {
+                    return baseModel.readAll(logPassPath);
+                }
+            })
+                .then((logPassDb) => {
+                    if (!existingLogin(req.body.login, logPassDb)) {
+                        throw { statusCode: 409, statusMessage: statusCodes.conflict.login };
+                    } else {
+                        const id = uniqid();
+                        const userInfo = getUserInfoObj(req.body, id);
+                    
+                        baseModel.addItem(userInfoPath, userInfo.userId, userInfo);
+                        return userInfo.userId;
+                    }
+                })
+                    .then((id) => {
+                        const logPass = {};
+                    
+                        logPass.password = (sha512(req.body.password, Key.pass));
+                        logPass.userId = id;
+                        baseModel.addItem(logPassPath, req.body.login, logPass);
+                    })
+                        .then(() => res.status(statusCodes.ok.code).json(statusCodes.ok.message))
+                            .catch((err) => {
+                                if (err.statusCode === statusCodes.conflict.code) {
+                                    return res.status(err.statusCode).json(err.statusMessage);
+                                }
+                                if (err.details[0].context.key) {
+                                    console.log(err.details[0].context.key);
+                                    return res.status(statusCodes.badRequest.code).json(statusCodes.badRequest[err.details[0].context.key]);
+                                }
+                                return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+                            });
 });
 
 router.post('/login', (req, res) => {
@@ -225,29 +172,29 @@ router.post('/login', (req, res) => {
                 return { id: id, tokenIdDb: tokenIdDb };
             }
         })
-        .then((info) => {
-            const signInStatus = isSignIn(info.id, info.tokenIdDb);
-            
-            if (!signInStatus) {
-                throw { statusCode: statusCodes.conflict.code, statusMessage: statusCodes.conflict.allreadyLogin };
-            } else {
-                const token = getBearerToken(info.id);
-                const refreshT = crypto.randomBytes(15).toString('hex');
-                const tokObj = {};
+            .then((info) => {
+                const signInStatus = isSignIn(info.id, info.tokenIdDb);
 
-                tokObj.userId = info.id;
-                tokObj.refreshToken = refreshT;
-                baseModel.addItem(tokenIdPath, token, tokObj);
-                return { BearerToken: token, RefreshToken: refreshT };
-            }
-        })
-        .then((messageInfo) => res.status(statusCodes.ok.code).json(messageInfo))
-        .catch((err) => {
-            if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
-                return res.status(err.statusCode).json(err.statusMessage);
-            }
-            return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
-        });
+                if (!signInStatus) {
+                    throw { statusCode: statusCodes.conflict.code, statusMessage: statusCodes.conflict.allreadyLogin };
+                } else {
+                    const token = getBearerToken(info.id);
+                    const refreshT = crypto.randomBytes(15).toString('hex');
+                    const tokObj = {};
+
+                    tokObj.userId = info.id;
+                    tokObj.refreshToken = refreshT;
+                    baseModel.addItem(tokenIdPath, token, tokObj);
+                    return { BearerToken: token, RefreshToken: refreshT };
+                }
+            })
+                .then((messageInfo) => res.status(statusCodes.ok.code).json(messageInfo))
+                    .catch((err) => {
+                        if (err.statusCode === statusCodes.badRequest.code || err.statusCode === statusCodes.conflict.code) {
+                            return res.status(err.statusCode).json(err.statusMessage);
+                        }
+                        return res.status(statusCodes.serverError.code).json(statusCodes.serverError.message);
+                    });
 });
 
 router.get('/logout', (req, res) => {

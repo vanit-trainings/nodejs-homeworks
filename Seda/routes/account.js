@@ -5,6 +5,7 @@ const TokenGenerator = require('uuid-token-generator');
 const router = express.Router();
 const Key = require("../data/.key.js")
 
+const statusCodes  = require('../data/statusCodes.js');
 const filePath = './data/users.json';
 const logPassPath = './data/logPassId.json';
 const tokenIdPath = './data/tokenId.json';

@@ -1,1 +1,33 @@
-{"1":{"id": "1", "quotes":"A list of quotes"}, "2":{"id": "2", "quotes":"AAAAAA"}, "3":{"id": "3", "quotes":"BBBBB"}, "4":{"id": "4", "quotes":"CCCCCC"}}
+{"1":{
+ "id": "1",
+  "data": {
+    "Combined_Age": {
+      "18 - 24": "true",
+      "25 - 34": {},
+      "35 - 44": {}
+    },
+    "Sex": {
+      "Female": "true",
+      "Male": {}
+    }
+  },
+  "msg": "success",
+  "success": "true"
+}, 
+"2": {
+"id": "2",
+  "data": {
+    "Combined_Age": {
+      "18 - 24": {},
+      "25 - 34": "true",
+      "35 - 44": {}
+    },
+    "Sex": {
+      "Female": "true",
+      "Male": {}
+    }
+  },
+  "msg": "success",
+  "success": "true"
+}
+}

@@ -3,7 +3,6 @@ const router = express.Router();
 const jsonfile = require('jsonfile');
 
 const base_model = require('./../base_model/base_model.js');
-const base_schema = require('./../base_model/base_schema.js');
 
 const BoxOficeMovieList = "./data/Movie_lists/Box_ofice_movie_lists.json";
 const OpeningThisWeek = "./data/Movie_lists/opening_this_week.json";

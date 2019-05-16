@@ -3,7 +3,6 @@ const router = express.Router();
 const jsonfile = require('jsonfile');
 
 const base_model = require('./../base_model/base_model.js');
-const base_schema = require('./../base_model/base_schema.js');
 
 const AllFilms = "./data/Films_info/all_fims_info.json";
 const MovieCast = "./data/Films_info/movies_cast.json";

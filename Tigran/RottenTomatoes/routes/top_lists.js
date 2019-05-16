@@ -3,7 +3,6 @@ const router = express.Router();
 const jsonfile = require('jsonfile');
 
 const base_model = require('./../base_model/base_model.js');
-const base_schema = require('./../base_model/base_schema.js');
 
 const TopLists = "./data/Top_level_lists/top_lists.json";
 

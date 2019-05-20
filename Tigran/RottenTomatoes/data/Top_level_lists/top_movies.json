@@ -1,53 +1,51 @@
 {
-    "top_movies_all_time" : [
-        {
-            "rank" : 1,
-            "name" : "Black Panther",
-            "year" : 2018,
-            "num_of_reviews" : 465,
-            "tomatometer" : 97
-        },
-        {
-            "rank" : 2,
-            "name" : "Lady Bird",
-            "year" : 2017,
-            "num_of_reviews" : 361,
-            "tomatometer" : 99
-        },
-        {
-            "rank" : 3,
-            "name" : "The Wizard of Oz",
-            "year" : 1939,
-            "num_of_reviews" : 111,
-            "tomatometer" : 98
-        },
-        {
-            "rank" : 4,
-            "name" : "Citizen Kane",
-            "year" : 1941,
-            "num_of_reviews" : 80,
-            "tomatometer" : 100
-        },
-        {
-            "rank" : 5,
-            "name" : "Citizen Kane",
-            "year" : 1941,
-            "num_of_reviews" : 80,
-            "tomatometer" : 100
-        },
-        {
-            "rank" : 6,
-            "name" : "Citizen Kane",
-            "year" : 1941,
-            "num_of_reviews" : 80,
-            "tomatometer" : 100
-        },
-        {
-            "rank" : 7,
-            "name" : "Citizen Kane",
-            "year" : 1941,
-            "num_of_reviews" : 80,
-            "tomatometer" : 100
-        }
-    ]
+    "Black Panther": {
+        "rank": 1,
+        "name": "Black Panther",
+        "year": 2018,
+        "num_of_reviews": 465,
+        "tomatometer": 97
+    },
+    "Lady Bird": {
+        "rank": 2,
+        "name": "Lady Bird",
+        "year": 2017,
+        "num_of_reviews": 361,
+        "tomatometer": 99
+    },
+    "The Wizard of Oz": {
+        "rank": 3,
+        "name": "The Wizard of Oz",
+        "year": 1939,
+        "num_of_reviews": 111,
+        "tomatometer": 98
+    },
+    "Citizen Kane": {
+        "rank": 4,
+        "name": "Citizen Kane1",
+        "year": 1941,
+        "num_of_reviews": 80,
+        "tomatometer": 100
+    },
+    "Citizen Kane2": {
+        "rank": 5,
+        "name": "Citizen Kane2",
+        "year": 1941,
+        "num_of_reviews": 80,
+        "tomatometer": 100
+    },
+    "Citizen Kane3": {
+        "rank": 6,
+        "name": "Citizen Kane3",
+        "year": 1941,
+        "num_of_reviews": 80,
+        "tomatometer": 100
+    },
+    "Citizen Kane4": {
+        "rank": 7,
+        "name": "Citizen Kane4",
+        "year": 1941,
+        "num_of_reviews": 80007800,
+        "tomatometer": 100
+    }
 }

@@ -1,22 +1,20 @@
 {
-    "top_tv_shows" : [
-        {
-            "name" : "Brooklyn Nine-Nine",
-            "seeason" : 6,
-            "tomatometer" : 100,
-            "Critic Consensus" : "Following a period of uncertainty and a shift to NBC, Brooklyn Nine-Nine reemerges with its cast and tone wholly intact."
-        },
-        {
-            "name" : "Better Things",
-            "seeason" : 3,
-            "tomatometer" : 100,
-            "Critic Consensus" : "Pamela Adlon fully asserts her authorial voice over Better Things in a triumphant third season that examines the exhaustion of motherhood with exhilarating artistry."
-        },
-        {
-            "name" : "Fleabag",
-            "seeason" : 2,
-            "tomatometer" : 100,
-            "Critic Consensus" : "Fleabag jumps back into the fray with a bracing second season that upholds its predecessors' frenzied wit and delicate heart, replete with Phoebe Waller-Bridge's indefatigable charisma."
-        }
-    ]
+    "Brooklyn Nine-Nine": {
+        "name": "Brooklyn Nine-Nine",
+        "seeason": 6,
+        "tomatometer": 100,
+        "Critic Consensus": "Following a period of uncertainty and a shift to NBC, Brooklyn Nine-Nine reemerges with its cast and tone wholly intact."
+    },
+    "Better Things": {
+        "name": "Better Things",
+        "seeason": 7,
+        "tomatometer": 100,
+        "Critic Consensus": "Pamela Adlon fully asserts her authorial voice over Better Things in a triumphant third season that examines the exhaustion of motherhood with exhilarating artistry."
+    },
+    "Fleabag": {
+        "name": "Fleabag",
+        "seeason": 2,
+        "tomatometer": 100,
+        "Critic Consensus": "Fleabag jumps back into the fray with a bracing second season that upholds its predecessors' frenzied wit and delicate heart, replete with Phoebe Waller-Bridge's indefatigable charisma."
+    }
 }

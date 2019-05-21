@@ -12,7 +12,7 @@ const AllFilms = "./data/Films_info/all_fims_info.json";
 router.get('/', function(req, res, next) {
     const query = require('url').parse(req.url,true).query;
     if (!query["search"]) {
-        return res.status(400).send("bad request");//
+        return res.status(400).send("bad request");
     }
     base_model.search(AllFilms,query["search"])
     .then(response => {

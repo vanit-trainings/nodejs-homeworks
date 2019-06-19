@@ -1,0 +1,2240 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.8 (Ubuntu 10.8-0ubuntu0.18.04.1)
+-- Dumped by pg_dump version 10.8 (Ubuntu 10.8-0ubuntu0.18.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: apartment_rent; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.apartment_rent (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    building_type character varying(20) NOT NULL,
+    space double precision NOT NULL,
+    room smallint NOT NULL,
+    floor smallint NOT NULL,
+    floor_mount smallint NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    time_period character varying(20) NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.apartment_rent OWNER TO postgres;
+
+--
+-- Name: apartment_rent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.apartment_rent_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.apartment_rent_id_seq OWNER TO postgres;
+
+--
+-- Name: apartment_rent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.apartment_rent_id_seq OWNED BY public.apartment_rent.id;
+
+
+--
+-- Name: apartment_rent_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.apartment_rent_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    time_period character varying(20) NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.apartment_rent_search OWNER TO postgres;
+
+--
+-- Name: apartment_rent_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.apartment_rent_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.apartment_rent_search_id_seq OWNER TO postgres;
+
+--
+-- Name: apartment_rent_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.apartment_rent_search_id_seq OWNED BY public.apartment_rent_search.id;
+
+
+--
+-- Name: apartment_sell; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.apartment_sell (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    building_type character varying(20) NOT NULL,
+    space double precision NOT NULL,
+    room smallint NOT NULL,
+    floor smallint NOT NULL,
+    floor_mount smallint NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.apartment_sell OWNER TO postgres;
+
+--
+-- Name: apartment_sell_exchange; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.apartment_sell_exchange (
+    id integer NOT NULL,
+    appartment_id integer
+);
+
+
+ALTER TABLE public.apartment_sell_exchange OWNER TO postgres;
+
+--
+-- Name: apartment_sell_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.apartment_sell_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.apartment_sell_id_seq OWNER TO postgres;
+
+--
+-- Name: apartment_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.apartment_sell_id_seq OWNED BY public.apartment_sell.id;
+
+
+--
+-- Name: apartment_sell_offer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.apartment_sell_offer (
+    id integer NOT NULL,
+    appartment_id integer
+);
+
+
+ALTER TABLE public.apartment_sell_offer OWNER TO postgres;
+
+--
+-- Name: apartment_sell_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.apartment_sell_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.apartment_sell_search OWNER TO postgres;
+
+--
+-- Name: apartment_sell_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.apartment_sell_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.apartment_sell_search_id_seq OWNER TO postgres;
+
+--
+-- Name: apartment_sell_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.apartment_sell_search_id_seq OWNED BY public.apartment_sell_search.id;
+
+
+--
+-- Name: appartment_sell_exchange_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.appartment_sell_exchange_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.appartment_sell_exchange_id_seq OWNER TO postgres;
+
+--
+-- Name: appartment_sell_exchange_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.appartment_sell_exchange_id_seq OWNED BY public.apartment_sell_exchange.id;
+
+
+--
+-- Name: appartment_sell_offer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.appartment_sell_offer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.appartment_sell_offer_id_seq OWNER TO postgres;
+
+--
+-- Name: appartment_sell_offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.appartment_sell_offer_id_seq OWNED BY public.apartment_sell_offer.id;
+
+
+--
+-- Name: commercial_rent; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.commercial_rent (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    building_type character varying(20) NOT NULL,
+    space double precision NOT NULL,
+    floor smallint NOT NULL,
+    floor_mount smallint NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    time_period character varying(20) NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.commercial_rent OWNER TO postgres;
+
+--
+-- Name: commercial_rent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.commercial_rent_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.commercial_rent_id_seq OWNER TO postgres;
+
+--
+-- Name: commercial_rent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.commercial_rent_id_seq OWNED BY public.commercial_rent.id;
+
+
+--
+-- Name: commercial_rent_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.commercial_rent_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    time_period character varying(20) NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.commercial_rent_search OWNER TO postgres;
+
+--
+-- Name: commercial_rent_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.commercial_rent_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.commercial_rent_search_id_seq OWNER TO postgres;
+
+--
+-- Name: commercial_rent_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.commercial_rent_search_id_seq OWNED BY public.commercial_rent_search.id;
+
+
+--
+-- Name: commercial_sell; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.commercial_sell (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    building_type character varying(20) NOT NULL,
+    space double precision NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.commercial_sell OWNER TO postgres;
+
+--
+-- Name: commercial_sell_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.commercial_sell_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.commercial_sell_id_seq OWNER TO postgres;
+
+--
+-- Name: commercial_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.commercial_sell_id_seq OWNED BY public.commercial_sell.id;
+
+
+--
+-- Name: commercial_sell_offer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.commercial_sell_offer (
+    id integer NOT NULL,
+    commercial_id integer
+);
+
+
+ALTER TABLE public.commercial_sell_offer OWNER TO postgres;
+
+--
+-- Name: commercial_sell_offer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.commercial_sell_offer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.commercial_sell_offer_id_seq OWNER TO postgres;
+
+--
+-- Name: commercial_sell_offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.commercial_sell_offer_id_seq OWNED BY public.commercial_sell_offer.id;
+
+
+--
+-- Name: commercial_sell_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.commercial_sell_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.commercial_sell_search OWNER TO postgres;
+
+--
+-- Name: commercial_sell_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.commercial_sell_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.commercial_sell_search_id_seq OWNER TO postgres;
+
+--
+-- Name: commercial_sell_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.commercial_sell_search_id_seq OWNED BY public.commercial_sell_search.id;
+
+
+--
+-- Name: garage_rent; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.garage_rent (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    space double precision NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.garage_rent OWNER TO postgres;
+
+--
+-- Name: garage_rent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.garage_rent_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.garage_rent_id_seq OWNER TO postgres;
+
+--
+-- Name: garage_rent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.garage_rent_id_seq OWNED BY public.garage_rent.id;
+
+
+--
+-- Name: garage_rent_offer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.garage_rent_offer (
+    id integer NOT NULL,
+    garage_id integer
+);
+
+
+ALTER TABLE public.garage_rent_offer OWNER TO postgres;
+
+--
+-- Name: garage_rent_offer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.garage_rent_offer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.garage_rent_offer_id_seq OWNER TO postgres;
+
+--
+-- Name: garage_rent_offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.garage_rent_offer_id_seq OWNED BY public.garage_rent_offer.id;
+
+
+--
+-- Name: garage_rent_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.garage_rent_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    time_period character varying(20) NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.garage_rent_search OWNER TO postgres;
+
+--
+-- Name: garage_rent_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.garage_rent_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.garage_rent_search_id_seq OWNER TO postgres;
+
+--
+-- Name: garage_rent_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.garage_rent_search_id_seq OWNED BY public.garage_rent_search.id;
+
+
+--
+-- Name: garage_sell; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.garage_sell (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    space double precision NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.garage_sell OWNER TO postgres;
+
+--
+-- Name: garage_sell_exchange; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.garage_sell_exchange (
+    id integer NOT NULL,
+    garage_id integer
+);
+
+
+ALTER TABLE public.garage_sell_exchange OWNER TO postgres;
+
+--
+-- Name: garage_sell_exchange_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.garage_sell_exchange_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.garage_sell_exchange_id_seq OWNER TO postgres;
+
+--
+-- Name: garage_sell_exchange_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.garage_sell_exchange_id_seq OWNED BY public.garage_sell_exchange.id;
+
+
+--
+-- Name: garage_sell_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.garage_sell_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.garage_sell_id_seq OWNER TO postgres;
+
+--
+-- Name: garage_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.garage_sell_id_seq OWNED BY public.garage_sell.id;
+
+
+--
+-- Name: garage_sell_offer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.garage_sell_offer (
+    id integer NOT NULL,
+    garage_id integer
+);
+
+
+ALTER TABLE public.garage_sell_offer OWNER TO postgres;
+
+--
+-- Name: garage_sell_offer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.garage_sell_offer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.garage_sell_offer_id_seq OWNER TO postgres;
+
+--
+-- Name: garage_sell_offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.garage_sell_offer_id_seq OWNED BY public.garage_sell_offer.id;
+
+
+--
+-- Name: garage_sell_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.garage_sell_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.garage_sell_search OWNER TO postgres;
+
+--
+-- Name: garage_sell_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.garage_sell_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.garage_sell_search_id_seq OWNER TO postgres;
+
+--
+-- Name: garage_sell_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.garage_sell_search_id_seq OWNED BY public.garage_sell_search.id;
+
+
+--
+-- Name: house_rent; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.house_rent (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    building_type character varying(20) NOT NULL,
+    space double precision NOT NULL,
+    room smallint NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    time_period character varying(20) NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.house_rent OWNER TO postgres;
+
+--
+-- Name: house_rent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.house_rent_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.house_rent_id_seq OWNER TO postgres;
+
+--
+-- Name: house_rent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.house_rent_id_seq OWNED BY public.house_rent.id;
+
+
+--
+-- Name: house_rent_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.house_rent_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    time_period character varying(20) NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.house_rent_search OWNER TO postgres;
+
+--
+-- Name: house_rent_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.house_rent_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.house_rent_search_id_seq OWNER TO postgres;
+
+--
+-- Name: house_rent_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.house_rent_search_id_seq OWNED BY public.house_rent_search.id;
+
+
+--
+-- Name: house_sell; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.house_sell (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    building_type character varying(20) NOT NULL,
+    space double precision NOT NULL,
+    room smallint NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.house_sell OWNER TO postgres;
+
+--
+-- Name: house_sell_exchange; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.house_sell_exchange (
+    id integer NOT NULL,
+    house_id integer
+);
+
+
+ALTER TABLE public.house_sell_exchange OWNER TO postgres;
+
+--
+-- Name: house_sell_exchange_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.house_sell_exchange_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.house_sell_exchange_id_seq OWNER TO postgres;
+
+--
+-- Name: house_sell_exchange_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.house_sell_exchange_id_seq OWNED BY public.house_sell_exchange.id;
+
+
+--
+-- Name: house_sell_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.house_sell_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.house_sell_id_seq OWNER TO postgres;
+
+--
+-- Name: house_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.house_sell_id_seq OWNED BY public.house_sell.id;
+
+
+--
+-- Name: house_sell_offer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.house_sell_offer (
+    id integer NOT NULL,
+    house_id integer
+);
+
+
+ALTER TABLE public.house_sell_offer OWNER TO postgres;
+
+--
+-- Name: house_sell_offer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.house_sell_offer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.house_sell_offer_id_seq OWNER TO postgres;
+
+--
+-- Name: house_sell_offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.house_sell_offer_id_seq OWNED BY public.house_sell_offer.id;
+
+
+--
+-- Name: house_sell_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.house_sell_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.house_sell_search OWNER TO postgres;
+
+--
+-- Name: house_sell_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.house_sell_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.house_sell_search_id_seq OWNER TO postgres;
+
+--
+-- Name: house_sell_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.house_sell_search_id_seq OWNED BY public.house_sell_search.id;
+
+
+--
+-- Name: land_sell; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.land_sell (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    space double precision NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.land_sell OWNER TO postgres;
+
+--
+-- Name: land_sell_exchange; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.land_sell_exchange (
+    id integer NOT NULL,
+    land_id integer
+);
+
+
+ALTER TABLE public.land_sell_exchange OWNER TO postgres;
+
+--
+-- Name: land_sell_exchange_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.land_sell_exchange_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.land_sell_exchange_id_seq OWNER TO postgres;
+
+--
+-- Name: land_sell_exchange_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.land_sell_exchange_id_seq OWNED BY public.land_sell_exchange.id;
+
+
+--
+-- Name: land_sell_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.land_sell_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.land_sell_id_seq OWNER TO postgres;
+
+--
+-- Name: land_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.land_sell_id_seq OWNED BY public.land_sell.id;
+
+
+--
+-- Name: land_sell_offer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.land_sell_offer (
+    id integer NOT NULL,
+    land_id integer
+);
+
+
+ALTER TABLE public.land_sell_offer OWNER TO postgres;
+
+--
+-- Name: land_sell_offer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.land_sell_offer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.land_sell_offer_id_seq OWNER TO postgres;
+
+--
+-- Name: land_sell_offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.land_sell_offer_id_seq OWNED BY public.land_sell_offer.id;
+
+
+--
+-- Name: land_sell_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.land_sell_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.land_sell_search OWNER TO postgres;
+
+--
+-- Name: land_sell_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.land_sell_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.land_sell_search_id_seq OWNER TO postgres;
+
+--
+-- Name: land_sell_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.land_sell_search_id_seq OWNED BY public.land_sell_search.id;
+
+
+--
+-- Name: other_rent; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.other_rent (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    space double precision NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.other_rent OWNER TO postgres;
+
+--
+-- Name: other_rent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.other_rent_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.other_rent_id_seq OWNER TO postgres;
+
+--
+-- Name: other_rent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.other_rent_id_seq OWNED BY public.other_rent.id;
+
+
+--
+-- Name: other_rent_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.other_rent_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    space double precision NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.other_rent_search OWNER TO postgres;
+
+--
+-- Name: other_rent_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.other_rent_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.other_rent_search_id_seq OWNER TO postgres;
+
+--
+-- Name: other_rent_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.other_rent_search_id_seq OWNED BY public.other_rent_search.id;
+
+
+--
+-- Name: other_sell; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.other_sell (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    address character varying(100) NOT NULL,
+    space double precision NOT NULL,
+    price integer NOT NULL,
+    price_unity character varying(10) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.other_sell OWNER TO postgres;
+
+--
+-- Name: other_sell_exchange; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.other_sell_exchange (
+    id integer NOT NULL,
+    other_id integer
+);
+
+
+ALTER TABLE public.other_sell_exchange OWNER TO postgres;
+
+--
+-- Name: other_sell_exchange_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.other_sell_exchange_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.other_sell_exchange_id_seq OWNER TO postgres;
+
+--
+-- Name: other_sell_exchange_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.other_sell_exchange_id_seq OWNED BY public.other_sell_exchange.id;
+
+
+--
+-- Name: other_sell_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.other_sell_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.other_sell_id_seq OWNER TO postgres;
+
+--
+-- Name: other_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.other_sell_id_seq OWNED BY public.other_sell.id;
+
+
+--
+-- Name: other_sell_offer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.other_sell_offer (
+    id integer NOT NULL,
+    other_id integer
+);
+
+
+ALTER TABLE public.other_sell_offer OWNER TO postgres;
+
+--
+-- Name: other_sell_offer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.other_sell_offer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.other_sell_offer_id_seq OWNER TO postgres;
+
+--
+-- Name: other_sell_offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.other_sell_offer_id_seq OWNED BY public.other_sell_offer.id;
+
+
+--
+-- Name: other_sell_search; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.other_sell_search (
+    id integer NOT NULL,
+    region character varying(50) NOT NULL,
+    title character varying(200) NOT NULL,
+    description text,
+    picture character varying,
+    owner_agent character varying(30) NOT NULL,
+    publication_time date NOT NULL,
+    contact integer
+);
+
+
+ALTER TABLE public.other_sell_search OWNER TO postgres;
+
+--
+-- Name: other_sell_search_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.other_sell_search_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.other_sell_search_id_seq OWNER TO postgres;
+
+--
+-- Name: other_sell_search_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.other_sell_search_id_seq OWNED BY public.other_sell_search.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    email character varying(35) NOT NULL,
+    phone character varying(25),
+    password character varying(20)
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: apartment_rent id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_rent ALTER COLUMN id SET DEFAULT nextval('public.apartment_rent_id_seq'::regclass);
+
+
+--
+-- Name: apartment_rent_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_rent_search ALTER COLUMN id SET DEFAULT nextval('public.apartment_rent_search_id_seq'::regclass);
+
+
+--
+-- Name: apartment_sell id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell ALTER COLUMN id SET DEFAULT nextval('public.apartment_sell_id_seq'::regclass);
+
+
+--
+-- Name: apartment_sell_exchange id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_exchange ALTER COLUMN id SET DEFAULT nextval('public.appartment_sell_exchange_id_seq'::regclass);
+
+
+--
+-- Name: apartment_sell_offer id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_offer ALTER COLUMN id SET DEFAULT nextval('public.appartment_sell_offer_id_seq'::regclass);
+
+
+--
+-- Name: apartment_sell_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_search ALTER COLUMN id SET DEFAULT nextval('public.apartment_sell_search_id_seq'::regclass);
+
+
+--
+-- Name: commercial_rent id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_rent ALTER COLUMN id SET DEFAULT nextval('public.commercial_rent_id_seq'::regclass);
+
+
+--
+-- Name: commercial_rent_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_rent_search ALTER COLUMN id SET DEFAULT nextval('public.commercial_rent_search_id_seq'::regclass);
+
+
+--
+-- Name: commercial_sell id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell ALTER COLUMN id SET DEFAULT nextval('public.commercial_sell_id_seq'::regclass);
+
+
+--
+-- Name: commercial_sell_offer id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell_offer ALTER COLUMN id SET DEFAULT nextval('public.commercial_sell_offer_id_seq'::regclass);
+
+
+--
+-- Name: commercial_sell_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell_search ALTER COLUMN id SET DEFAULT nextval('public.commercial_sell_search_id_seq'::regclass);
+
+
+--
+-- Name: garage_rent id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent ALTER COLUMN id SET DEFAULT nextval('public.garage_rent_id_seq'::regclass);
+
+
+--
+-- Name: garage_rent_offer id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent_offer ALTER COLUMN id SET DEFAULT nextval('public.garage_rent_offer_id_seq'::regclass);
+
+
+--
+-- Name: garage_rent_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent_search ALTER COLUMN id SET DEFAULT nextval('public.garage_rent_search_id_seq'::regclass);
+
+
+--
+-- Name: garage_sell id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell ALTER COLUMN id SET DEFAULT nextval('public.garage_sell_id_seq'::regclass);
+
+
+--
+-- Name: garage_sell_exchange id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_exchange ALTER COLUMN id SET DEFAULT nextval('public.garage_sell_exchange_id_seq'::regclass);
+
+
+--
+-- Name: garage_sell_offer id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_offer ALTER COLUMN id SET DEFAULT nextval('public.garage_sell_offer_id_seq'::regclass);
+
+
+--
+-- Name: garage_sell_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_search ALTER COLUMN id SET DEFAULT nextval('public.garage_sell_search_id_seq'::regclass);
+
+
+--
+-- Name: house_rent id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_rent ALTER COLUMN id SET DEFAULT nextval('public.house_rent_id_seq'::regclass);
+
+
+--
+-- Name: house_rent_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_rent_search ALTER COLUMN id SET DEFAULT nextval('public.house_rent_search_id_seq'::regclass);
+
+
+--
+-- Name: house_sell id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell ALTER COLUMN id SET DEFAULT nextval('public.house_sell_id_seq'::regclass);
+
+
+--
+-- Name: house_sell_exchange id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_exchange ALTER COLUMN id SET DEFAULT nextval('public.house_sell_exchange_id_seq'::regclass);
+
+
+--
+-- Name: house_sell_offer id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_offer ALTER COLUMN id SET DEFAULT nextval('public.house_sell_offer_id_seq'::regclass);
+
+
+--
+-- Name: house_sell_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_search ALTER COLUMN id SET DEFAULT nextval('public.house_sell_search_id_seq'::regclass);
+
+
+--
+-- Name: land_sell id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell ALTER COLUMN id SET DEFAULT nextval('public.land_sell_id_seq'::regclass);
+
+
+--
+-- Name: land_sell_exchange id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_exchange ALTER COLUMN id SET DEFAULT nextval('public.land_sell_exchange_id_seq'::regclass);
+
+
+--
+-- Name: land_sell_offer id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_offer ALTER COLUMN id SET DEFAULT nextval('public.land_sell_offer_id_seq'::regclass);
+
+
+--
+-- Name: land_sell_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_search ALTER COLUMN id SET DEFAULT nextval('public.land_sell_search_id_seq'::regclass);
+
+
+--
+-- Name: other_rent id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_rent ALTER COLUMN id SET DEFAULT nextval('public.other_rent_id_seq'::regclass);
+
+
+--
+-- Name: other_rent_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_rent_search ALTER COLUMN id SET DEFAULT nextval('public.other_rent_search_id_seq'::regclass);
+
+
+--
+-- Name: other_sell id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell ALTER COLUMN id SET DEFAULT nextval('public.other_sell_id_seq'::regclass);
+
+
+--
+-- Name: other_sell_exchange id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_exchange ALTER COLUMN id SET DEFAULT nextval('public.other_sell_exchange_id_seq'::regclass);
+
+
+--
+-- Name: other_sell_offer id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_offer ALTER COLUMN id SET DEFAULT nextval('public.other_sell_offer_id_seq'::regclass);
+
+
+--
+-- Name: other_sell_search id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_search ALTER COLUMN id SET DEFAULT nextval('public.other_sell_search_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: apartment_rent apartment_rent_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_rent
+    ADD CONSTRAINT apartment_rent_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: apartment_rent_search apartment_rent_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_rent_search
+    ADD CONSTRAINT apartment_rent_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: apartment_sell apartment_sell_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell
+    ADD CONSTRAINT apartment_sell_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: apartment_sell_search apartment_sell_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_search
+    ADD CONSTRAINT apartment_sell_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: apartment_sell_exchange appartment_sell_exchange_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_exchange
+    ADD CONSTRAINT appartment_sell_exchange_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: apartment_sell_offer appartment_sell_offer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_offer
+    ADD CONSTRAINT appartment_sell_offer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commercial_rent commercial_rent_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_rent
+    ADD CONSTRAINT commercial_rent_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commercial_rent_search commercial_rent_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_rent_search
+    ADD CONSTRAINT commercial_rent_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commercial_sell_offer commercial_sell_offer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell_offer
+    ADD CONSTRAINT commercial_sell_offer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commercial_sell commercial_sell_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell
+    ADD CONSTRAINT commercial_sell_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commercial_sell_search commercial_sell_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell_search
+    ADD CONSTRAINT commercial_sell_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: garage_rent_offer garage_rent_offer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent_offer
+    ADD CONSTRAINT garage_rent_offer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: garage_rent garage_rent_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent
+    ADD CONSTRAINT garage_rent_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: garage_rent_search garage_rent_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent_search
+    ADD CONSTRAINT garage_rent_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: garage_sell_exchange garage_sell_exchange_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_exchange
+    ADD CONSTRAINT garage_sell_exchange_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: garage_sell_offer garage_sell_offer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_offer
+    ADD CONSTRAINT garage_sell_offer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: garage_sell garage_sell_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell
+    ADD CONSTRAINT garage_sell_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: garage_sell_search garage_sell_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_search
+    ADD CONSTRAINT garage_sell_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: house_sell_search house__sell_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_search
+    ADD CONSTRAINT house__sell_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: house_rent house_rent_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_rent
+    ADD CONSTRAINT house_rent_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: house_rent_search house_rent_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_rent_search
+    ADD CONSTRAINT house_rent_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: house_sell_exchange house_sell_exchange_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_exchange
+    ADD CONSTRAINT house_sell_exchange_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: house_sell_offer house_sell_offer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_offer
+    ADD CONSTRAINT house_sell_offer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: house_sell house_sell_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell
+    ADD CONSTRAINT house_sell_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: land_sell_exchange land_sell_exchange_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_exchange
+    ADD CONSTRAINT land_sell_exchange_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: land_sell_offer land_sell_offer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_offer
+    ADD CONSTRAINT land_sell_offer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: land_sell land_sell_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell
+    ADD CONSTRAINT land_sell_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: land_sell_search land_sell_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_search
+    ADD CONSTRAINT land_sell_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: other_rent other_rent_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_rent
+    ADD CONSTRAINT other_rent_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: other_rent_search other_rent_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_rent_search
+    ADD CONSTRAINT other_rent_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: other_sell_exchange other_sell_exchange_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_exchange
+    ADD CONSTRAINT other_sell_exchange_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: other_sell_offer other_sell_offer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_offer
+    ADD CONSTRAINT other_sell_offer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: other_sell other_sell_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell
+    ADD CONSTRAINT other_sell_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: other_sell_search other_sell_search_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_search
+    ADD CONSTRAINT other_sell_search_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: apartment_rent apartment_rent_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_rent
+    ADD CONSTRAINT apartment_rent_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: apartment_rent_search apartment_rent_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_rent_search
+    ADD CONSTRAINT apartment_rent_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: apartment_sell_exchange appartment_sell_exchange_appartment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_exchange
+    ADD CONSTRAINT appartment_sell_exchange_appartment_id_fkey FOREIGN KEY (appartment_id) REFERENCES public.apartment_sell(id);
+
+
+--
+-- Name: apartment_sell_offer appartment_sell_offer_appartment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_offer
+    ADD CONSTRAINT appartment_sell_offer_appartment_id_fkey FOREIGN KEY (appartment_id) REFERENCES public.apartment_sell(id);
+
+
+--
+-- Name: commercial_rent commercial_rent_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_rent
+    ADD CONSTRAINT commercial_rent_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: commercial_rent_search commercial_rent_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_rent_search
+    ADD CONSTRAINT commercial_rent_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: commercial_sell commercial_sell_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell
+    ADD CONSTRAINT commercial_sell_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: commercial_sell_offer commercial_sell_offer_commercial_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell_offer
+    ADD CONSTRAINT commercial_sell_offer_commercial_id_fkey FOREIGN KEY (commercial_id) REFERENCES public.commercial_sell(id);
+
+
+--
+-- Name: commercial_sell_search commercial_sell_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commercial_sell_search
+    ADD CONSTRAINT commercial_sell_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: apartment_sell fk_user_contact; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell
+    ADD CONSTRAINT fk_user_contact FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: apartment_sell_search fkey_contact; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.apartment_sell_search
+    ADD CONSTRAINT fkey_contact FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: garage_rent garage_rent_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent
+    ADD CONSTRAINT garage_rent_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: garage_rent_offer garage_rent_offer_garage_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent_offer
+    ADD CONSTRAINT garage_rent_offer_garage_id_fkey FOREIGN KEY (garage_id) REFERENCES public.garage_rent(id);
+
+
+--
+-- Name: garage_rent_search garage_rent_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_rent_search
+    ADD CONSTRAINT garage_rent_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: garage_sell garage_sell_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell
+    ADD CONSTRAINT garage_sell_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: garage_sell_exchange garage_sell_exchange_commercial_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_exchange
+    ADD CONSTRAINT garage_sell_exchange_commercial_id_fkey FOREIGN KEY (garage_id) REFERENCES public.garage_sell(id);
+
+
+--
+-- Name: garage_sell_offer garage_sell_offer_commercial_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_offer
+    ADD CONSTRAINT garage_sell_offer_commercial_id_fkey FOREIGN KEY (garage_id) REFERENCES public.garage_sell(id);
+
+
+--
+-- Name: garage_sell_search garage_sell_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.garage_sell_search
+    ADD CONSTRAINT garage_sell_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: house_sell_search house__sell_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_search
+    ADD CONSTRAINT house__sell_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: house_rent house_rent_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_rent
+    ADD CONSTRAINT house_rent_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: house_rent_search house_rent_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_rent_search
+    ADD CONSTRAINT house_rent_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: house_sell house_sell_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell
+    ADD CONSTRAINT house_sell_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: house_sell_exchange house_sell_exchange_house_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_exchange
+    ADD CONSTRAINT house_sell_exchange_house_id_fkey FOREIGN KEY (house_id) REFERENCES public.house_sell(id);
+
+
+--
+-- Name: house_sell_offer house_sell_offer_house_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.house_sell_offer
+    ADD CONSTRAINT house_sell_offer_house_id_fkey FOREIGN KEY (house_id) REFERENCES public.house_sell(id);
+
+
+--
+-- Name: land_sell land_sell_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell
+    ADD CONSTRAINT land_sell_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: land_sell_exchange land_sell_exchange_land_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_exchange
+    ADD CONSTRAINT land_sell_exchange_land_id_fkey FOREIGN KEY (land_id) REFERENCES public.land_sell(id);
+
+
+--
+-- Name: land_sell_offer land_sell_offer_land_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_offer
+    ADD CONSTRAINT land_sell_offer_land_id_fkey FOREIGN KEY (land_id) REFERENCES public.land_sell(id);
+
+
+--
+-- Name: land_sell_search land_sell_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.land_sell_search
+    ADD CONSTRAINT land_sell_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: other_rent other_rent_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_rent
+    ADD CONSTRAINT other_rent_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: other_rent_search other_rent_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_rent_search
+    ADD CONSTRAINT other_rent_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: other_sell other_sell_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell
+    ADD CONSTRAINT other_sell_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- Name: other_sell_exchange other_sell_exchange_other_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_exchange
+    ADD CONSTRAINT other_sell_exchange_other_id_fkey FOREIGN KEY (other_id) REFERENCES public.other_sell(id);
+
+
+--
+-- Name: other_sell_offer other_sell_offer_other_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_offer
+    ADD CONSTRAINT other_sell_offer_other_id_fkey FOREIGN KEY (other_id) REFERENCES public.other_sell(id);
+
+
+--
+-- Name: other_sell_search other_sell_search_contact_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_sell_search
+    ADD CONSTRAINT other_sell_search_contact_fkey FOREIGN KEY (contact) REFERENCES public.users(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

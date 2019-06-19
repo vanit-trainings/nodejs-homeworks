@@ -2,48 +2,14 @@ const express = require('express');
 const uniqid = require('uniqid');
 const jsonfile = require('jsonfile');
 const TokenGenerator = require('uuid-token-generator');
+const crypto = require('crypto');
+const keyHash = require('../data/keyHash.js');
 
 const router = express.Router();
 const filePath = './data/users.json';
 const logPassPath = './data/logPassId.json';
 const tokenIdPath = './data/tokenId.json';
-
-const statuses = {
-    notFound: {
-        status: 404,
-        message: 'not found'
-    },
-    serverError: {
-        status: 500,
-        message: 'server Error'
-    },
-    badRequest: {
-        status: 400,
-        messageFirst: 'Body is empty',
-        messageSecond: 'Invalid firstName or lastName',
-        messageThird: 'Invalid gender',
-        messageFourth: 'Enter valid email',
-        messageFifth: 'Enter valid login',
-        messageSixth: 'Enter valid password',
-        messageSeventh: 'Enter valid login and password'
-    },
-    unauthorized: {
-        status: 401,
-        messageFirst: 'unauthorized',
-        messageSecond: 'Token needs to be updated'
-
-    },
-    conflict: {
-        status: 409,
-        messageFirst: 'Email already busy',
-        messageSecond: 'Login already busy'
-    },
-    ok: {
-        status: 200,
-        message: 'OK'
-    }
-};
-
+const statuses = require('./status');
 
 const validateLogin = (login) => {
     const regLog = new RegExp(/^((\w+)(\.|_)?){5,16}/);
@@ -85,7 +51,10 @@ const existingEmail = (info, email) => {
 const validatePassword = (password) => {
     const regPass = new RegExp(/(\w+){6,16}/);
 
-    return (password === password.match(regPass)[ 0 ]);
+    if (password.match(regPass)) {
+        return (password === password.match(regPass)[ 0 ]);
+    }
+    return false;
 };
 
 const validateName = (name) => {
@@ -144,7 +113,7 @@ const validations = function(req) {
 router.post('/register', (req, res) => {
     const validationStatus = validations(req);
 
-    if (validationStatus.statusCode !== statueses.ok.s) {
+    if (validationStatus.statusCode !== statuses.ok.status) {
         return res.status(validationStatus.statusCode).json(validationStatus.statusMessage);
     }
     jsonfile.readFile(filePath, (err, info) => {
@@ -159,7 +128,7 @@ router.post('/register', (req, res) => {
                 return res.status(statuses.serverError.status).json({ statusMessage: statuses.serverError.message });
             }
             if (!existingLogin(req.body.login, logPassId)) {
-                return res.status(statueses.conflict.status).json({ statusMessage: statueses.conflict.messageSecond });
+                return res.status(statuses.conflict.status).json({ statusMessage: statuses.conflict.messageSecond });
             }
             const id = uniqid();
             const codePass = (new Buffer(req.body.password)).toString('base64');
@@ -189,7 +158,7 @@ router.post('/register', (req, res) => {
                     if (err) {
                         return res.status(statuses.serverError.status).json({ statusMessage: statuses.serverError.message });
                     }
-                    return res.status(statueses.ok.status).json({ statusMessage: statueses.ok.message });
+                    return res.status(statuses.ok.status).json({ statusMessage: statuses.ok.message });
                 });
             });
         });
@@ -198,14 +167,14 @@ router.post('/register', (req, res) => {
 
 router.post('/login', (req, res) => {
     if (Object.keys(req.body).length === 0) {
-        return res.status(400).send('Bad request: Body is empty');
+        return res.status(statuses.badRequest.status).json({ statusMessage: statuses.badRequest.messageFirst });
     }
     jsonfile.readFile(logPassPath, (err, logPassId) => {
         if (err) {
             return res.status(statuses.serverError.status).json({ statusMessage: statuses.serverError.message });
         }
         if (!logPassId.hasOwnProperty(req.body.login) || logPassId[ req.body.login ].password !== (new Buffer(req.body.password)).toString('base64')) {
-            return res.status(400).send('Bad request: Enter valid login or password');
+            return res.status(statuses.badRequest.status).json({ statusMessage: statuses.badRequest.messageSeventh });
         }
 		
         const id = logPassId[ req.body.login ].userId;
@@ -225,10 +194,8 @@ router.post('/login', (req, res) => {
                     if (err) {
                         return res.status(statuses.serverError.status).json({ statusMessage: statuses.serverError.message });
                     }
-                    res.writeHead(200, { token });
-                    res.write('OK');
-                    res.end();
-                    return res.send();
+                    res.setHeader('token', token);
+                    return res.json({ statusMessage: statuses.ok.message });
                 });
             });
         });
@@ -236,15 +203,6 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logOut', (req, res) => {
-    if (authorization(req) === 'Server error') {
-        return res.status(statuses.serverError.status).json({ statusMessage: statuses.serverError.message });
-    }
-    if (authorization(req) === 'Id is missing') {
-        return res.status(400).send('Bad request: UserId is missing');
-    }
-    if (authorization(req) === 'Token Id pair do not match') {
-        return res.status(400).send('Bad request: Token Id pair do not match');
-    }
     const token = req.headers.token;
 
     jsonfile.readFile(tokenIdPath, (err, tokenId) => {
@@ -256,7 +214,7 @@ router.get('/logOut', (req, res) => {
             if (err) {
                 return res.status(statuses.serverError.status).json({ statusMessage: statuses.serverError.message });
             }
-            return res.status(200).send('OK');
+            return res.status(statuses.ok.status).json({ statusMessage: statuses.ok.message });
         });
     });
 });
@@ -287,7 +245,7 @@ router.get('/userInfo', (req, res) => {
             if (err) {
                 return res.status(statuses.serverError.status).json({ statusMessage: statuses.serverError.message });
             }
-            res.writeHead(200, { token });
+            res.writeHead(statuses.ok.status, { token });
             const uInfo = JSON.stringify(userInfo);
 
             res.write(uInfo);

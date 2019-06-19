@@ -1,0 +1,65 @@
+{
+    "Richard_Holbrooke_the": {
+        "title": "Richard Holbrooke, the Last Great Freewheeling Diplomat",
+        "photo": "https://static01.nyt.com/images/2019/05/12/books/review/10ISAACSON1/12ISAACSON-videoLarge.jpg",
+        "description": "George Packer’s biography of Holbrooke, “Our Man,” is a complex portrait of a complex man who had power, but never enough.",
+        "address": "https://www.nytimes.com/2019/05/09/books/review/george-packer-our-man-richard-holbrooke-biography.html",
+        "status": "NONFICTION"
+    },
+    "A_Psychotherapist_Analyzes": {
+        "title": "A Psychotherapist Analyzes Her Patients’ Stories",
+        "photo": "https://static01.nyt.com/images/2019/05/12/books/review/12Kuczynski/merlin_153838368_8026e04d-0852-430d-9fd9-ea5110de5b93-jumbo.jpg?quality=90&auto=webp",
+        "description": "Lori Gottlieb’s “Maybe You Should Talk to Someone: A Therapist, Her Therapist, and Our Lives Revealed” is a treasure trove of stories and hard-earned advice.",
+        "address": "https://www.nytimes.com/2019/04/16/books/review/lori-gottlieb-maybe-you-should-talk-to-someone.html",
+        "status": "NONFICTION"
+    },
+    "What_You_Should": {
+        "title": "What You Should Read to Understand the Measles Epidemic",
+        "photo": "https://static01.nyt.com/images/2019/05/12/books/review/12Zuger/12Zuger-videoLarge.jpg",
+        "description": "In her Prescribed Reading column, Abigail Zuger looks at books exploring the immune system and the tumultuous history of vaccination.",
+        "address": "https://www.nytimes.com/2019/04/17/books/review/measles-epidemic-vaccination.html",
+        "status": "NONFICTION"
+    },
+    "Globetrotting": {
+        "title": "Globetrotting",
+        "photo": "https://static01.nyt.com/images/2019/01/19/books/promo-globetrotting/promo-globetrotting-videoLarge.jpg",
+        "description": "Your sneak preview of books coming out in 2019 from around the world.",
+        "address": "https://www.nytimes.com/interactive/2019/01/19/books/new-books-international.html?mtrref=www.nytimes.com&gwh=975F6FD0CB58E2BA59753E48AF35B53A&gwt=pay",
+        "status": "UPCOMING BOOKS"
+    },
+    "The_True-Crime_Story": {
+        "title": "The True-Crime Story That Harper Lee Tried and Failed to Write",
+        "photo": "https://static01.nyt.com/images/2019/05/19/books/review/19Lewis-COVER/19Lewis-COVER-videoLarge.jpg",
+        "description": "In “Furious Hours,” Casey Cep investigates the Alabama murder case that was to have been the focus of Lee’s second book — as well as the famously reclusive writer herself, plumbing the mystery of her 50-year silence.",
+        "address": "https://www.nytimes.com/2019/05/06/books/review/casey-cep-furious-hours-harper-lee.html",
+        "status": "NONFICTION"
+    },
+    "An_Economist_Who": {
+        "title": "An Economist Who Believes Only Government Can Save Capitalism",
+        "photo": "https://static01.nyt.com/images/2019/04/19/books/review/Drezner/Drezner-videoLarge.jpg",
+        "description": "In “People, Power, and Profits” Joseph E. Stiglitz argues that more state involvement in the economy is part of the solution, not part of the problem.",
+        "address": "https://www.nytimes.com/2019/05/10/books/review/joseph-e-stiglitz-people-power-profits.html",
+        "status": "NONFICTION"
+    },
+    "9_New_Books": {
+        "title": "9 New Books We Recommend This Week",
+        "photo": "https://static01.nyt.com/images/2019/05/09/books/09edchoice-covers/09edchoice-covers-videoLarge.jpg",
+        "description": "Suggested reading from critics and editors at The New York Times.",
+        "address": "https://www.nytimes.com/2019/05/09/books/review/9-new-books-we-recommend-this-week.html",
+        "status": "EDITORS’ CHOICE"
+    },
+    "The_Real_Life ": {
+        "title": "The Real Life of a Diplomat, Told Like a Novel",
+        "photo": "https://static01.nyt.com/images/2019/05/10/books/10podcast-cover/10podcast-cover-videoLarge.jpg",
+        "description": "George Packer talks about “Our Man: Richard Holbrooke and the End of the American Century,” and Lori Gottlieb discusses “Maybe You Should Talk to Someone.”",
+        "address": "https://www.nytimes.com/2019/05/10/books/review/podcast-our-man-richard-holbrooke-george-packer-lori-gottlieb.html",
+        "status": "THE BOOK REVIEW PODCAST"
+    },
+    "Best_Seller_Lists": {
+        "title": "Best-Seller Lists: May 19, 2019",
+        "photo": "https://static01.nyt.com/images/2019/01/11/books/00-BestSeller-Logo-Image/00-BestSeller-Logo-Image-mediumThreeByTwo225.png",
+        "description": "All the lists: print, e-books, fiction, nonfiction, children’s books and more.",
+        "address": "https://www.nytimes.com/interactive/2019/05/01/books/review/best-sellers-promo-for-front-copy2.html",
+        "status": "BEST SELLERS"
+    }
+}

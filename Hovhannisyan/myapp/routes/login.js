@@ -1,13 +1,15 @@
 const express = require('express');
-
+//const require = require('../baseModules/baseMod.js')
 const router = express.Router();
 const jsonfile = require('jsonfile');
-
+const validate = require('../baseModeles/validation')
+const model = require('../baseModeles/baseMod');
 const filepath = './data/users.json';
 const loginedUsers = './data/loginedUsers.json';
 const crypto = require('crypto');
 const keyword = "barevdzez"
 //const bearerToken = require('express-bearer-token');
+
 
 
 const hash = crypto.createHash('sha512');
@@ -22,23 +24,7 @@ const thousand = 1000;
 const unauthorized = 401;
 const second = two * sixth * sixth * thousand;
 
-const validateUsername = function validateUsername(username) {
-    const usernameRegex = /^[a-zA-Z]+$/;
 
-    return usernameRegex.test(username);
-};
-
-const validatePass = function validatePass(password) {
-    const passw = /^[A-Za-z]\w{7,15}$/;
-
-    return passw.test(password);
-};
-
-const validateEmail = function validateEmail(email) {
-    const mail = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
-
-    return mail.test(email);
-};
 const toCode = function(str, key) {
     const hash = crypto.createHmac('sha512', Buffer.from(key));
 
@@ -69,8 +55,8 @@ const tokenGenerate = (username,date) => {
 };
 
 router.post('/registration', (req, res) => {
-    jsonfile.readFile(filepath, (err1, obj) => {
-        if (err1) {
+    /*jsonfile.readFile(filepath, (err1, obj) => {
+        if (err1) { 
             return res.status(serverError).send('Server error');
         }
         if (!validateUsername(req.body.username) || !validatePass(req.body.password) || !validateEmail(req.body.email)) {
@@ -82,22 +68,46 @@ router.post('/registration', (req, res) => {
         if (obj[req.body.username]) {
             return res.status(badRequest).send('Username is already existed');
         }
+*/
+        model.readAll(filepath)
+        .then(data => { 
+             res.send(data)
+            // if(data[req.body.username]){
+            //     return res.status(badRequest).send('Username is already existed');
+            // }
+            // data[req.body.username] = {
+            //     username: req.body.username,
+            //     password: toCode(req.body.password,keyword),
+            //     // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
+            //     email: req.body.email
+            //     };
+            //     return data;
+        })
+        // .then(changedData=>{
+        //     addItem(filepath,req.body.username,data[req.body.username])
+        //     return 'OK';
+        // })
+        // .then(resp => {
+        //     return res.send('resp');
+        // })
+        .catch(err=>{ res.send('err')});
 
-        obj[req.body.username] = {
-            username: req.body.username,
-            password: toCode(req.body.password,keyword),
-            // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
-            email: req.body.email
 
-        };
-        jsonfile.writeFile(filepath, obj, { spaces: 4, EOL: '\r\n' }, (err) => {
-            if (err) {
-                return res.status(serverError).send('Server error');
-            }
-            return res.status(OK).send('ok');
-        });
-    });
-});
+        // obj[req.body.username] = {
+        //     username: req.body.username,
+        //     password: toCode(req.body.password,keyword),
+        //     // password: Buffer.from(req.body.password).toString('base64'),//kodavorel
+        //     email: req.body.email
+
+        // };
+//         jsonfile.writeFile(filepath, obj, { spaces: 4, EOL: '\r\n' }, (err) => {
+//             if (err) {
+//                 return res.status(serverError).send('Server error');
+//             }
+//             return res.status(OK).send('ok');
+//         });
+//     });
+ });
 
 
 
@@ -132,8 +142,7 @@ router.post('/login', (req, res) => {
 
             const token = tokenGenerate(req.body.username,later);
 
-            //username: req.body.username,
-            //date: later
+
             data[token] = {
                 token
             };
@@ -159,10 +168,10 @@ router.get('/login/authorized', (req, res) => {
         if (data[req.headers.token] === undefined) {
             return res.status(unauthorized).send('User is\'nt authorized!');
         }
-        y = Buffer.from(req.headers.token, 'base64').toString('ascii');//2222222
-        JSON.parse(y);
+        tmp = Buffer.from(req.headers.token, 'base64').toString('ascii');//2222222
+        z = JSON.parse(tmp);
         //req.headers.token.
-        if(y.date < (new Date()).getTime()) {
+        if(z.date < (new Date()).getTime()) {
             return res.status(unauthorized).send('User isn\'t authorized');
         }
         //if (data[req.headers.token].date < (new Date()).getTime()) {

@@ -5,6 +5,7 @@ const TokenGenerator = require('uuid-token-generator');
 const router = express.Router();
 const Key = require("../data/.key.js")
 
+const statusCodes  = require('../data/statusCodes.js');
 const filePath = './data/users.json';
 const logPassPath = './data/logPassId.json';
 const tokenIdPath = './data/tokenId.json';
@@ -92,141 +93,7 @@ function authorization(req) {
 		return 'OK';
 	});
 }
-router.post('/registr', function(req, res) {
 	
-// 	if (Object.keys(req.body).length === 0) {
-// 		return 'Bad request: Body is empty';
-// 	}
-// 	if (!validateName(req.body.firstName) || !validateName(req.body.lastName)) {
-// 		return 'Bad request: Invalid firstName or lastName';
-// 	}
-// 	if (!validateEmail(req.body.email)) {
-// 		return 'Bad request: Enter valid email';
-// 	}
-// 	if (!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
-// 		return 'Bad request: Enter valid login';
-// 	}
-// 	if (!validatePassword(req.body.password)) {
-// 		return'Bad request: Enter valid password';
-// 	} 
-// 	    return 'OK';
-	
-// 	} 
-// 	jsonfile.readFile(filePath, function(err, info) {
-// 		if (err) {
-// 			return res.status(500).send('Server error');
-// 		}
-// 		if (!existingEmail(info, req.body.email)) {
-// 			return res.status(409).send('Bad request: Email already busy'); 
-// 		}
-// 		jsonfile.readFile(logPassPath, function(err, logPassId) {
-// 			if (err) {
-// 				return res.status(500).send('Server error');
-// 			}
-// 			if (!existingLogin(req.body.login, logPassId)) {
-// 				return res.status(400).send('Bad request: Login already busy'); 
-// 			}
-// 			const id = uniqid();
-// 			const codePass = (new Buffer(req.body.password)).toString('base64');
-// 			let data = {};
-// 			data.firstName = req.body.firstName;    
-// 			data.lastName = req.body.lastName;    
-// 			data.email = req.body.email;    
-// 			data.login = req.body.login;    
-// 			data.gender = req.body.gender;
-// 			data.birthDate = req.body.birthDate;
-// 			data.userId = id;
-// 			info[id] = data;
-
-// 			let logPass = {};    
-// 			logPass.password = codePass;
-// 			logPass.userId = id;
-// 			logPassId[req.body.login] = logPass;
-
-// 			jsonfile.writeFile(filePath, info, {spaces: 2, EOL: "\r\n"}, function(err) {
-// 				if (err) {
-// 					return res.status(500).send('Server error');
-// 				}
-// 				else {
-// 					jsonfile.writeFile(logPassPath, logPassId, {spaces: 2, EOL: "\r\n"}, function(err) {
-// 						if(err) {
-// 							return res.status(500).send('Server error');
-// 						}
-// 						return res.status(200).send('OK');
-// 					});
-// 				}
-// 			});
-// 		});
-// 	});
-// });
-
-// router.post('/registr', function(req, res) {
-	
-// 	if (Object.keys(req.body).length === 0) {
-// 		return 'Bad request: Body is empty';
-// 	}
-// 	if (!validateName(req.body.firstName) || !validateName(req.body.lastName)) {
-// 		return 'Bad request: Invalid firstName or lastName';
-// 	}
-// 	if (!validateEmail(req.body.email)) {
-// 		return 'Bad request: Enter valid email';
-// 	}
-// 	if (!validateLogin(req.body.login) && !validateEmail(req.body.login)) {
-// 		return 'Bad request: Enter valid login';
-// 	}
-// 	if (!validatePassword(req.body.password)) {
-// 		return'Bad request: Enter valid password';
-// 	} 
-// 	    return 'OK';
-	
-// 	} 
-// 	jsonfile.readFile(filePath, function(err, info) {
-// 		if (err) {
-// 			return res.status(500).send('Server error');
-// 		}
-// 		if (!existingEmail(info, req.body.email)) {
-// 			return res.status(409).send('Bad request: Email already busy'); 
-// 		}
-// 		jsonfile.readFile(logPassPath, function(err, logPassId) {
-// 			if (err) {
-// 				return res.status(500).send('Server error');
-// 			}
-// 			if (!existingLogin(req.body.login, logPassId)) {
-// 				return res.status(400).send('Bad request: Login already busy'); 
-// 			}
-// 			const id = uniqid();
-// 			const codePass = (new Buffer(req.body.password)).toString('base64');
-// 			let data = {};
-// 			data.firstName = req.body.firstName;    
-// 			data.lastName = req.body.lastName;    
-// 			data.email = req.body.email;    
-// 			data.login = req.body.login;    
-// 			data.gender = req.body.gender;
-// 			data.birthDate = req.body.birthDate;
-// 			data.userId = id;
-// 			info[id] = data;
-
-// 			let logPass = {};    
-// 			logPass.password = codePass;
-// 			logPass.userId = id;
-// 			logPassId[req.body.login] = logPass;
-
-// 			jsonfile.writeFile(filePath, info, {spaces: 2, EOL: "\r\n"}, function(err) {
-// 				if (err) {
-// 					return res.status(500).send('Server error');
-// 				}
-// 				else {
-// 					jsonfile.writeFile(logPassPath, logPassId, {spaces: 2, EOL: "\r\n"}, function(err) {
-// 						if(err) {
-// 							return res.status(500).send('Server error');
-// 						}
-// 						return res.status(200).send('OK');
-// 					});
-// 				}
-// 			});
-// 		});
-// 	});
-// });
 router.post('/registr', function(req, res) {
 	if (Object.keys(req.body).length === 0) {
 		return res.status(400).send('Bad request: Body is empty');

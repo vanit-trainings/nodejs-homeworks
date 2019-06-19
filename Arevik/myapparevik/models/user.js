@@ -1,12 +1,14 @@
 const Joi = require('joi');
-
 Joi.objectId = require('joi-objectid')(Joi);
 
-const userSchema = Joi.object({
-    _id: Joi.objectId(),
-    username: Joi.string(),
-    email: Joi.string().email().required(),
-    password: Joi.string()
-});
+function validateUsers(user) {
+    const userSchema = Joi.object({
+        _id: Joi.objectId(),
+        username: Joi.string().regex(/^[a-zA-Z][a-z0-9-_]{3,20}/).required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().required()
+    });
 
-module.exports = userSchema;
+    return Joi.validate(user, userSchema);
+}
+module.exports = validateUsers;

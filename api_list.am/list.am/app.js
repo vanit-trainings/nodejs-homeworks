@@ -1,5 +1,9 @@
-const express = require('express')
-const bodyParser = require('body-parser')
+const express = require('express');
+const bodyParser = require('body-parser');
+const joi = require('joi');
+const statuses = require('/data/const.js');
+const dataSchema = require('/data/joiSchema');
+
 const app = express();
 const port = 3000;
 const Pool = require('pg').Pool;
@@ -19,16 +23,13 @@ app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });
 
-
-
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'list.am',
-    password: 'lyusi',
+    password: 'psql_js',
     port: 5432
 });
-
 
 const getUsers = (request, response) => {
   pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
@@ -60,4 +61,3 @@ const getUserByName = (request, response) => {//porcnakan (ashxatum a)
 }
 
 app.get('/users', getUsers);
-

@@ -13,7 +13,7 @@ module.exports = {
     "notFound": { "code": 404, "message": { "statusMessage": "Not found" } },
     
     "conflict": { "code": 409, 
-                  "login": { "statusMessage": "Login already busy" },
+                  "title": { "statusMessage": "Title already busy" },
                   "email": { "statusMessage": "Email already busy" },
                   "token": { "statusMessage": "Token does not need to be updated" } },
     
